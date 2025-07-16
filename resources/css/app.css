@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+main {
+    /*padding-top: 120px; !* Adjust based on your navbar height *!*/
+}
+
+@media (max-width: 768px) {
+    main {
+        padding-top: 80px; /* Smaller padding for mobile */
+    }
+}
+
+
+/* Auth Pages */
+.min-h-screen {
+    min-height: 100vh;
+    min-width: 100vh;
+}
+
+.bg-gray-50 {
+    background-color: #f9fafb;
+}
+
+.max-w-md {
+    max-width: 28rem;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Focus styles */
+.focus\:ring-blue-500:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgba(59, 130, 246, var(--tw-ring-opacity));
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.focus\:border-transparent:focus {
+    border-color: transparent;
+}
+
+/* Button loading state */
+.disabled\:opacity-50:disabled {
+    opacity: 0.5;
+}
+
+
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+.dropdown-container:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+}
