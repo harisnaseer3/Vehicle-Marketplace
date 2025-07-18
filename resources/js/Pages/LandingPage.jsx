@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom';
 import { FaCar, FaSearch, FaShieldAlt, FaExchangeAlt, FaStar } from 'react-icons/fa';
 import Navbar from "@/Components/Navbar.jsx";
 import {useEffect} from "react";
+import FeaturedVehicles from "@/Components/Vehicles/FeaturedVehicles.jsx";
 
 const LandingPage = ({ auth }) => {
     // Sample featured vehicles - replace with real data later
     const featuredVehicles = [
-        { id: 1, make: 'Toyota', model: 'Corolla', year: 2022, price: '$18,500', image: '/images/toyota-corolla.jpg' },
+        { id: 1, make: 'Toyota', model: 'Corolla', year: 2022, price: '$18,500', image: '/images/sample2.jpg' },
         { id: 2, make: 'Honda', model: 'Civic', year: 2021, price: '$16,200', image: '/images/honda-civic.jpg' },
         { id: 3, make: 'Suzuki', model: 'Swift', year: 2020, price: '$12,800', image: '/images/suzuki-swift.jpg' },
         { id: 4, make: 'Toyota', model: 'Hilux', year: 2019, price: '$22,300', image: '/images/toyota-hilux.jpg' },
@@ -16,21 +17,24 @@ const LandingPage = ({ auth }) => {
         <div className="min-h-screen bg-gray-50">
 
             {/* Navbar */}
-            <Navbar auth={auth} />
+            <Navbar auth={auth}/>
 
             {/* Hero Section */}
             <div className="relative bg-gray-900 overflow-hidden">
                 <div className="max-w-7xl mx-auto">
-                    <div className="relative z-10 pb-8 bg-gray-900 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+                    <div
+                        className="relative z-10 pb-8 bg-gray-900 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
                         <div className="pt-10 sm:pt-16 lg:pt-8 lg:pb-14 lg:overflow-hidden">
-                            <div className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                            <div
+                                className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
                                 <div className="sm:text-center lg:text-left">
                                     <h1 className="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl">
                                         <span className="block">Find your perfect</span>
                                         <span className="block text-blue-400">vehicle today</span>
                                     </h1>
                                     <p className="mt-3 text-base text-gray-300 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                                        Browse thousands of quality used cars, trucks, and SUVs from trusted sellers across the country.
+                                        Browse thousands of quality used cars, trucks, and SUVs from trusted sellers
+                                        across the country.
                                     </p>
                                     <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                                         <div className="rounded-md shadow">
@@ -71,7 +75,8 @@ const LandingPage = ({ auth }) => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Make</label>
-                            <select className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <select
+                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                                 <option>All Makes</option>
                                 <option>Toyota</option>
                                 <option>Honda</option>
@@ -80,7 +85,8 @@ const LandingPage = ({ auth }) => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Model</label>
-                            <select className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <select
+                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                                 <option>All Models</option>
                                 <option>Corolla</option>
                                 <option>Civic</option>
@@ -89,7 +95,8 @@ const LandingPage = ({ auth }) => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Price Range</label>
-                            <select className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            <select
+                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                                 <option>Any Price</option>
                                 <option>Under $10,000</option>
                                 <option>$10,000 - $20,000</option>
@@ -97,8 +104,9 @@ const LandingPage = ({ auth }) => {
                             </select>
                         </div>
                         <div className="flex items-end">
-                            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md flex items-center justify-center">
-                                <FaSearch className="mr-2" />
+                            <button
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md flex items-center justify-center">
+                                <FaSearch className="mr-2"/>
                                 Search
                             </button>
                         </div>
@@ -106,7 +114,7 @@ const LandingPage = ({ auth }) => {
                 </div>
             </div>
 
-            {/* Featured Vehicles */}
+            {/* Featured vehicles */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
@@ -117,41 +125,7 @@ const LandingPage = ({ auth }) => {
                     </p>
                 </div>
 
-                <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    {featuredVehicles.map((vehicle) => (
-                        <div key={vehicle.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                            <div className="h-48 bg-gray-200 overflow-hidden">
-                                <img
-                                    className="w-full h-full object-cover"
-                                    src={vehicle.image}
-                                    alt={`${vehicle.make} ${vehicle.model}`}
-                                />
-                            </div>
-                            <div className="p-4">
-                                <h3 className="text-lg font-semibold text-gray-900">{vehicle.make} {vehicle.model}</h3>
-                                <p className="text-gray-600">{vehicle.year}</p>
-                                <div className="mt-4 flex justify-between items-center">
-                                    <span className="text-xl font-bold text-blue-600">{vehicle.price}</span>
-                                    <Link
-                                        to={`/vehicles/${vehicle.id}`}
-                                        className="text-blue-600 hover:text-blue-800 font-medium"
-                                    >
-                                        View Details
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="mt-8 text-center">
-                    <Link
-                        to="/vehicles"
-                        className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-                    >
-                        View All Vehicles
-                    </Link>
-                </div>
+                <FeaturedVehicles/>
             </div>
 
             {/* Why Choose Us */}
@@ -168,8 +142,9 @@ const LandingPage = ({ auth }) => {
 
                     <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
                         <div className="text-center">
-                            <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
-                                <FaShieldAlt className="h-6 w-6" />
+                            <div
+                                className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
+                                <FaShieldAlt className="h-6 w-6"/>
                             </div>
                             <h3 className="mt-4 text-lg font-medium text-gray-900">Verified Listings</h3>
                             <p className="mt-2 text-base text-gray-600">
@@ -178,8 +153,9 @@ const LandingPage = ({ auth }) => {
                         </div>
 
                         <div className="text-center">
-                            <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
-                                <FaExchangeAlt className="h-6 w-6" />
+                            <div
+                                className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
+                                <FaExchangeAlt className="h-6 w-6"/>
                             </div>
                             <h3 className="mt-4 text-lg font-medium text-gray-900">Easy Transactions</h3>
                             <p className="mt-2 text-base text-gray-600">
@@ -188,8 +164,9 @@ const LandingPage = ({ auth }) => {
                         </div>
 
                         <div className="text-center">
-                            <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
-                                <FaCar className="h-6 w-6" />
+                            <div
+                                className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
+                                <FaCar className="h-6 w-6"/>
                             </div>
                             <h3 className="mt-4 text-lg font-medium text-gray-900">Wide Selection</h3>
                             <p className="mt-2 text-base text-gray-600">
@@ -198,8 +175,9 @@ const LandingPage = ({ auth }) => {
                         </div>
 
                         <div className="text-center">
-                            <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
-                                <FaStar className="h-6 w-6" />
+                            <div
+                                className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
+                                <FaStar className="h-6 w-6"/>
                             </div>
                             <h3 className="mt-4 text-lg font-medium text-gray-900">Customer Support</h3>
                             <p className="mt-2 text-base text-gray-600">

@@ -11,8 +11,8 @@ import AdminLayout from '@/Layouts/AdminLayout';
 
 // Public Pages
 import LandingPage from '@/Pages/LandingPage';
-// import VehicleListing from '@/Pages/Vehicle/Listing';
-// import VehicleDetail from '@/Pages/Vehicle/Detail';
+// import VehicleListing from '@/Pages/Post/Listing';
+// import VehicleDetail from '@/Pages/Post/Detail';
 // import SearchResults from '@/Pages/SearchResults';
 
 // Auth Pages
@@ -29,8 +29,8 @@ import ResetPassword from '@/Pages/Auth/ResetPassword';
 // import Notifications from '@/Pages/User/Notifications';
 
 // Listing Management
-// import CreateVehicle from '@/Pages/Vehicle/Create';
-// import EditVehicle from '@/Pages/Vehicle/Edit';
+// import CreateVehicle from '@/Pages/Post/Create';
+// import EditVehicle from '@/Pages/Post/Edit';
 
 // Admin Pages
 // import AdminLogin from '@/Pages/Admin/Login';

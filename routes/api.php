@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Posts\PostsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Vehicle\VehicleController;
+use App\Http\Controllers\Vehicle\FeaturedVehicleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,14 +30,24 @@ Route::get('/test', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout']);
-Route::get('/vehicles', [VehicleController::class, 'index']);
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
+
+//post
+Route::get('/posts', [PostsController::class, 'index']);
+Route::get('/post/{id}', [PostsController::class, 'show']);
+
+//vehicle
+Route::get('/featured-vehicles', [FeaturedVehicleController::class, 'index']);
 // Protected Routes (JWT Token Required)
 Route::middleware('auth:api')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return response()->json($request->user());
-    });
+    Route::post('/create-post', [PostsController::class, 'create']);
+    Route::put('/update-post/{id}', [PostsController::class, 'update']);
+    Route::delete('/posts/{id}', [PostsController::class, 'destroy']);
+    Route::post('/posts/{id}/restore', [PostsController::class, 'restore']);
+    Route::delete('/posts/{id}/force', [PostsController::class, 'forceDelete']);
 
-    Route::post('/vehicles', [VehicleController::class, 'store']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
 });

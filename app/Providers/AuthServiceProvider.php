@@ -8,7 +8,7 @@ use Laravel\Passport\Passport;
 class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        // 'App\VehicleModel\VehicleModel' => 'App\Policies\ModelPolicy',
     ];
 
     public function boot(): void
