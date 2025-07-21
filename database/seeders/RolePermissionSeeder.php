@@ -32,13 +32,13 @@ class RolePermissionSeeder extends Seeder
             'manage-users',
             'suspend-users',
 
-            //listings
-            'create-listings',
-            'edit-own-listings',
-            'delete-own-listings',
-            'manage-listings',
-            'approve-listings',
-            'delete-listings',
+            //post
+            'create-post',
+            'edit-own-post',
+            'delete-own-post',
+            'manage-post',
+            'approve-post',
+            'delete-post',
             'view-messages',
             'manage-roles',
 
@@ -55,9 +55,9 @@ class RolePermissionSeeder extends Seeder
 
 
             //Dealer (inherits seller)
-            'create-multiple-listings',
+            'create-multiple-post',
             'access-dealer-panel',
-            'promote-listing',
+            'promote-post',
 
         ];
 
@@ -72,16 +72,16 @@ class RolePermissionSeeder extends Seeder
         // Assign specific permissions to moderator
         $moderatorPermission = [
             'suspend-users',
-            'approve-listings',
+            'approve-post',
 
         ];
         $moderator->givePermissionTo($moderatorPermission);
 
         // Assign specific permissions to seller
         $seller->syncPermissions([
-            'create-listings',
-            'edit-own-listings',
-            'delete-own-listings',
+            'create-post',
+            'edit-own-post',
+            'delete-own-post',
             'view-messages',
         ]);
 
@@ -94,9 +94,9 @@ class RolePermissionSeeder extends Seeder
 
         // Assign specific permissions to dealer
         $dealer->syncPermissions([
-            'create-multiple-listings',
+            'create-multiple-post',
             'access-dealer-panel',
-            'promote-listing',
+            'promote-post',
         ]);
 
         // Assign specific permissions to guest

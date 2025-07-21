@@ -22,13 +22,19 @@ class AuthController extends BaseController
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'phone' => $request->phone,
                 'password' => Hash::make($request->password),
             ]);
+
+            // Assign default role if not provided
+            $role = $request->input('role') ?? 'user';
+            $user->assignRole($role); // Make sure the 'user' role exists in DB
 
             $token = $user->createToken('vehicle-marketplace')->accessToken;
 
             $data = (object)[
                 'user' => $user,
+                'role' => $role,
                 'token' => $token
             ];
 
@@ -44,20 +50,33 @@ class AuthController extends BaseController
 
     public function login(Request $request)
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required'
+            ]);
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return response()->json(['error' => 'Invalid credentials'], 401);
+            }
+
             $token = $user->createToken('vehicle-marketplace')->accessToken;
 
             return response()->json([
                 'token' => $token,
                 'user' => $user
-            ], 200);
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            ]);
+        
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
         }
     }
 
-    public function logout(Request $request) {
+
+    public function logout(Request $request)
+    {
         $request->user()->token()->revoke();
         return $this->sendResponse([], 'User logged out successfully.');
     }

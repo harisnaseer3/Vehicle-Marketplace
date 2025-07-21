@@ -5,6 +5,7 @@ use App\Http\Controllers\Posts\PostsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Vehicle\FeaturedVehicleController;
+use App\Http\Controllers\Category\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,17 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 //post
 Route::get('/posts', [PostsController::class, 'index']);
 Route::get('/post/{id}', [PostsController::class, 'show']);
+
+//categories
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/makes/{category_id}', [CategoryController::class, 'getMakes']);
+Route::get('/models/{make_id}', [CategoryController::class, 'getModels']);
+Route::get('/vehicle-registration', [CategoryController::class, 'getVehiclesRegister']);
+Route::get('/cities', [CategoryController::class, 'getCities']);
+Route::get('/transmission-type', [CategoryController::class, 'getTransmissionType']);
+Route::get('/fuel-type', [CategoryController::class, 'getFuelType']);
+Route::get('/body-type', [CategoryController::class, 'getBodyType']);
+Route::get('/condition-type', [CategoryController::class, 'getCondition']);
 
 //vehicle
 Route::get('/featured-vehicles', [FeaturedVehicleController::class, 'index']);

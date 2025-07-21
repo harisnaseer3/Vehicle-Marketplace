@@ -19,51 +19,16 @@ return new class extends Migration
             $table->foreignId('make_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('model_id')->nullable()->constrained('models')->onDelete('set null');
             $table->foreignId('vehicle_registration_id')->nullable()->constrained('vehicle_register')->onDelete('set null');
-
             $table->string('title');
             $table->text('description');
             $table->decimal('price', 10, 2);
             $table->year('year');
             $table->integer('mileage')->nullable();
             $table->string('color')->nullable();
-
-            // Use enums for fields with specific options
-            $table->enum('transmission_type', ['automatic', 'manual', 'semi-automatic'])->nullable();
-
-            // Specific fuel types
-            $table->enum('fuel_type', [
-                'petrol',
-                'diesel',
-                'electric',
-                'hybrid',
-                'lpg',
-                'cng',
-                'bio-diesel',
-                'other'
-            ])->nullable();
-
-            // Common body types
-            $table->enum('body_type', [
-                'sedan',
-                'suv',
-                'hatchback',
-                'coupe',
-                'convertible',
-                'wagon',
-                'van',
-                'pickup',
-                'truck',
-                'other'
-            ])->nullable();
-
-            // Post condition options
-            $table->enum('condition', [
-                'new',
-                'used',
-                'certified-pre-owned',
-                'salvage'
-            ])->nullable();
-
+            $table->string('transmission_type')->nullable();
+            $table->string('fuel_type')->nullable();
+            $table->string('body_type')->nullable();
+            $table->string('condition')->nullable();
             $table->string('location')->nullable();
             $table->json('features')->nullable();
             $table->json('images')->nullable();

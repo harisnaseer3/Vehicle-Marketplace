@@ -13,10 +13,10 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::create(['name' => 'admin']);
-        $userRole = Role::create(['name' => 'user']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $userRole = Role::firstOrCreate(['name' => 'user']);
 
-        $admin = User::create([
+        $admin = User::firstOrCreate([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
             'phone' => '03441518890',
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         ]);
         $admin->assignRole($adminRole);
 
-        $user = User::create([
+        $user = User::firstOrCreate([
             'name' => 'User',
             'email' => 'user@user.com',
             'phone' => '03441518891',

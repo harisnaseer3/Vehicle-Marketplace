@@ -125,7 +125,7 @@ const LandingPage = ({ auth }) => {
                     </p>
                 </div>
 
-                <FeaturedVehicles/>
+                <FeaturedVehicles isHomePage={true} />
             </div>
 
             {/* Why Choose Us */}

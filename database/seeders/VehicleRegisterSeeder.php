@@ -15,6 +15,9 @@ class VehicleRegisterSeeder extends Seeder
     {
         DB::table('vehicle_register')->insert([
             ['province' => 'Punjab', 'status' => 'Registered', 'created_at' => now(), 'updated_at' => now()],
+            ['province' => 'Sindh', 'status' => 'Registered', 'created_at' => now(), 'updated_at' => now()],
+            ['province' => 'Khyber PakhtunKhwa', 'status' => 'Registered', 'created_at' => now(), 'updated_at' => now()],
+            ['province' => 'Balochistan', 'status' => 'Registered', 'created_at' => now(), 'updated_at' => now()],
             ['province' => null, 'status' => 'Unregistered', 'created_at' => now(), 'updated_at' => now()],
             ['province' => null, 'status' => 'Applied for', 'created_at' => now(), 'updated_at' => now()],
         ]);

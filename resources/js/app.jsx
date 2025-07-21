@@ -1,18 +1,19 @@
 import '../css/app.css';
 import './bootstrap';
-import { Routes, Route, useNavigate} from 'react-router-dom';
+import {Routes, Route, useNavigate, Outlet } from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import axios from '@/axios';
 
+import { AuthProvider } from "@/contexts/AuthContext.jsx";
+
 // Layouts
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GuestLayout from '@/Layouts/GuestLayout';
 import AdminLayout from '@/Layouts/AdminLayout';
 
 // Public Pages
 import LandingPage from '@/Pages/LandingPage';
-// import VehicleListing from '@/Pages/Post/Listing';
-// import VehicleDetail from '@/Pages/Post/Detail';
+import VehicleListing from '@/Pages/Vehicles/AllVehicles.jsx';
+import VehicleDetails from '@/Components/Vehicles/VehicleDetails.jsx';
 // import SearchResults from '@/Pages/SearchResults';
 
 // Auth Pages
@@ -29,7 +30,7 @@ import ResetPassword from '@/Pages/Auth/ResetPassword';
 // import Notifications from '@/Pages/User/Notifications';
 
 // Listing Management
-// import CreateVehicle from '@/Pages/Post/Create';
+import CreateVehicle from '@/Pages/Post/create.jsx';
 // import EditVehicle from '@/Pages/Post/Edit';
 
 // Admin Pages
@@ -42,10 +43,17 @@ import AdminDashboard from '@/Pages/Admin/Dashboard';
 // import NotFound from '@/Pages/Errors/NotFound';
 // import Unauthorized from '@/Pages/Errors/Unauthorized';
 
-function App() {
-    return <AppRoutes />;
-}
+// function App() {
+//     return <AppRoutes/>;
+// }
 
+function App() {
+    return (
+        <AuthProvider>
+            <AppRoutes />
+        </AuthProvider>
+    );
+}
 
 // Admin Route Wrapper
 const AdminRoute = ({children}) => {
@@ -79,7 +87,7 @@ const AdminRoute = ({children}) => {
 };
 
 // Authenticated User Route Wrapper
-const AuthRoute = ({children}) => {
+const AuthRoute = () => {
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(null);
 
@@ -101,7 +109,7 @@ const AuthRoute = ({children}) => {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
-    return isAuthenticated ? <AuthenticatedLayout>{children}</AuthenticatedLayout> : null;
+    return isAuthenticated ? <Outlet /> : null;
 };
 
 function AppRoutes() {
@@ -109,8 +117,8 @@ function AppRoutes() {
         <Routes>
             {/* Public Routes */}
             <Route path="/" element={<GuestLayout><LandingPage/></GuestLayout>}/>
-            {/*<Route path="/vehicles" element={<GuestLayout><VehicleListing/></GuestLayout>}/>*/}
-            {/*<Route path="/vehicles/:id" element={<GuestLayout><VehicleDetail/></GuestLayout>}/>*/}
+            <Route path="/vehicles" element={<GuestLayout><VehicleListing/></GuestLayout>}/>
+            <Route path="/vehicles/:id" element={<GuestLayout><VehicleDetails/></GuestLayout>}/>
             {/*<Route path="/search" element={<GuestLayout><SearchResults/></GuestLayout>}/>*/}
 
             {/* Authentication Routes */}
@@ -126,7 +134,7 @@ function AppRoutes() {
                 {/*<Route path="/saved-vehicles" element={<SavedVehicles/>}/>*/}
                 {/*<Route path="/inbox" element={<Inbox/>}/>*/}
                 {/*<Route path="/notifications" element={<Notifications/>}/>*/}
-                {/*<Route path="/vehicles/create" element={<CreateVehicle/>}/>*/}
+                <Route path="/post/create" element={<CreateVehicle/>}/>
                 {/*<Route path="/vehicles/:id/edit" element={<EditVehicle/>}/>*/}
             </Route>
 

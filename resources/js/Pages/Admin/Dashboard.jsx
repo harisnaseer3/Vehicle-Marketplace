@@ -1,4 +1,3 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.jsx';
 import { FaCar, FaSearch, FaPlusCircle, FaUserCog } from 'react-icons/fa';
 import {Link} from "react-router-dom";
 
@@ -19,15 +18,7 @@ const Dashboard = () => {
     ];
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
-                </h2>
-            }
-        >
-            <Head title="Dashboard" />
-
+        <>
             <div className="py-6">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {/* Quick Actions */}
@@ -130,7 +121,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }
 

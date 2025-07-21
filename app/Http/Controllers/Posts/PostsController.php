@@ -4,20 +4,21 @@ namespace App\Http\Controllers\Posts;
 
 use App\Classes\StatusEnum;
 use App\Http\Controllers\BaseController;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Vehicle\CreatePostRequest;
 use App\Http\Requests\Vehicle\UpdatePostRequest;
 use App\Models\Post;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PostsController extends BaseController
 {
+    use AuthorizesRequests;
     public function index(Request $request)
     {
         try {
-            $per_page = $request->per_page ?? 10;
+            $per_page = $request->per_page ?? 12;
             $vehicles = Post::with(StatusEnum::POST_RELATIONSHIP)->paginate($per_page);
             return $this->sendResponse($vehicles->toArray(), 'vehicles retrieved successfully.');
         } catch (\Exception $e) {
@@ -27,6 +28,7 @@ class PostsController extends BaseController
 
     public function create(CreatePostRequest $request)
     {
+        $this->authorize('create-post');
         try {
             DB::beginTransaction();
 
@@ -101,6 +103,7 @@ class PostsController extends BaseController
 
     public function update(UpdatePostRequest $request, Post $post)
     {
+        $this->authorize('create-post');
         try {
             DB::beginTransaction();
 
@@ -170,11 +173,9 @@ class PostsController extends BaseController
 
     public function destroy($id)
     {
+        $this->authorize('create-post');
         try {
             $vehicle = Post::findOrFail($id);
-
-            // Authorization check (example using policy)
-            $this->authorize('delete', $vehicle);
 
             $vehicle->delete();
 

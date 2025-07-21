@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Vehicle;
 
+use App\Classes\StatusEnum;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
@@ -13,11 +14,19 @@ class FeaturedVehicleController extends BaseController
     {
         try {
             $perPage = $request->per_page ?? 10;
-            $vehicle = Post::where('is_featured', 1)->paginate($perPage);
-            return $this->sendResponse($vehicle, 'Featured vehicle list displayed successfully.');
-        } catch (\Exception $e)
-        {
-            return $this->sendError($e->getMessage());
+
+            $vehicles = Post::with(StatusEnum::POST_RELATIONSHIP)
+                ->where('is_featured', 1)
+                ->whereHas('category', function ($query) {
+                    $query->where('name', StatusEnum::CAR);
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage);
+
+            return $this->sendResponse($vehicles, 'Featured vehicle list displayed successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Failed to fetch featured vehicles: ' . $e->getMessage(), $e->getCode() ?: 500);
         }
     }
+
 }
