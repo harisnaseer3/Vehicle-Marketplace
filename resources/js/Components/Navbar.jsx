@@ -14,6 +14,7 @@ const Navbar = () => {
     });
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [error, setError] = useState(null);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -32,18 +33,41 @@ const Navbar = () => {
         navigate('/register');
     };
 
+    const handleSearch = async () => {
+        try {
+            const response = await axios.get("vehicle/simple-search", {
+                params: { search }
+            });
+            navigate(`/vehicles/search?search=${encodeURIComponent(search)}`);
+        } catch (error) {
+            console.error("Search error:", error);
+        }
+    }
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSearch();
+        }
+    };
+
     const handleLogout = async () => {
         try {
-            await axios.post('logout', {}, {
+            await axios.post('/logout', {}, {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
                 }
             });
+
+            // Clear local storage and auth state
             localStorage.removeItem('auth_token');
-            setAuth({user: null});
-            navigate('/login');
+            setAuth({ user: null });
+            navigate('/');
         } catch (error) {
-            setError(error.response?.data?.message || "Failed to logout");
+            // Even if the request fails, we should clear the local token
+            localStorage.removeItem('auth_token');
+            setAuth({ user: null });
+            navigate('/login');
         }
     };
 
@@ -74,17 +98,22 @@ const Navbar = () => {
                             <div className="relative w-full max-w-xl">
                                 <input
                                     type="text"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onKeyDown={handleKeyDown}
                                     placeholder="Search for cars, bikes, and more..."
                                     className="w-full py-2 px-4 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
-                                <button className="absolute right-0 top-0 h-full px-4 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
+                                <button
+                                    onClick={handleSearch}
+                                    className="absolute right-0 top-0 h-full px-4 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
                                     <FaSearch />
                                 </button>
                             </div>
                         </div>
 
                         <div className="hidden md:flex items-center space-x-4">
-                            <RouterLink to="/sell-vehicle" className="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                            <RouterLink to="/post/create" className="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
                                 Sell Vehicle
                             </RouterLink>
 
@@ -134,8 +163,8 @@ const Navbar = () => {
                 <div className="bg-gray-100 border-t border-gray-200">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="flex space-x-6 overflow-x-auto py-2 hide-scrollbar">
-                            <RouterLink to="/used-cars" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Used Cars</RouterLink>
-                            <RouterLink to="/new-cars" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">New Cars</RouterLink>
+                            <RouterLink to="/vehicles?condition=used" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Used Cars</RouterLink>
+                            <RouterLink to="/vehicles?condition=new" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">New Cars</RouterLink>
                             <RouterLink to="/bikes" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Bikes</RouterLink>
                             <RouterLink to="/autoparts" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Auto Parts</RouterLink>
                             <RouterLink to="/dealers" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Dealers</RouterLink>
@@ -156,7 +185,7 @@ const Navbar = () => {
                                     <FaSearch />
                                 </button>
                             </div>
-                            <RouterLink to="/sell-vehicle" className="block px-3 py-2 text-white bg-red-600 rounded-md">Sell Vehicle</RouterLink>
+                            <RouterLink to="/post/create" className="block px-3 py-2 text-white bg-red-600 rounded-md">Sell Vehicle</RouterLink>
                             {auth.user ? (
                                 <>
                                     <RouterLink to="/dashboard" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Dashboard</RouterLink>

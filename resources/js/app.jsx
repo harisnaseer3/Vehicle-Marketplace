@@ -14,7 +14,11 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import LandingPage from '@/Pages/LandingPage';
 import VehicleListing from '@/Pages/Vehicles/AllVehicles.jsx';
 import VehicleDetails from '@/Components/Vehicles/VehicleDetails.jsx';
-// import SearchResults from '@/Pages/SearchResults';
+import Search from '@/Components/Vehicles/Search/Search.jsx';
+import SearchResult from '@/Components/Vehicles/Search/SearchResult.jsx';
+//Bikes
+import BikesListing from '@/Pages/Vehicles/AllBikes.jsx';
+
 
 // Auth Pages
 import Login from '@/Pages/Auth/Login';
@@ -36,6 +40,7 @@ import CreateVehicle from '@/Pages/Post/create.jsx';
 // Admin Pages
 // import AdminLogin from '@/Pages/Admin/Login';
 import AdminDashboard from '@/Pages/Admin/Dashboard';
+import BikeDetails from "@/Components/Vehicles/BikeDetails.jsx";
 // import ManageUsers from '@/Pages/Admin/ManageUsers';
 // import ManageListings from '@/Pages/Admin/ManageListings';
 
@@ -94,7 +99,7 @@ const AuthRoute = () => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                await axios.get('/api/user');
+                await axios.get('/auth/check');
                 setIsAuthenticated(true);
             } catch (error) {
                 setIsAuthenticated(false);
@@ -118,14 +123,20 @@ function AppRoutes() {
             {/* Public Routes */}
             <Route path="/" element={<GuestLayout><LandingPage/></GuestLayout>}/>
             <Route path="/vehicles" element={<GuestLayout><VehicleListing/></GuestLayout>}/>
-            <Route path="/vehicles/:id" element={<GuestLayout><VehicleDetails/></GuestLayout>}/>
-            {/*<Route path="/search" element={<GuestLayout><SearchResults/></GuestLayout>}/>*/}
+            <Route path="/vehicle/:id" element={<GuestLayout><VehicleDetails/></GuestLayout>}/>
+            <Route path="/search" element={<GuestLayout><Search/></GuestLayout>}/>
+            <Route path="/vehicles/search" element={<GuestLayout><SearchResult/></GuestLayout>}/>
+
+            {/*Bikes*/}
+            <Route path="/bikes" element={<GuestLayout><BikesListing/></GuestLayout>}/>
+            <Route path="/bike/:id" element={<GuestLayout><BikeDetails/></GuestLayout>}/>
 
             {/* Authentication Routes */}
             <Route path="/login" element={<GuestLayout><Login/></GuestLayout>}/>
             <Route path="/register" element={<GuestLayout><Register/></GuestLayout>}/>
             <Route path="/forgot-password" element={<GuestLayout><ForgotPassword/></GuestLayout>}/>
             <Route path="/reset-password/:token" element={<GuestLayout><ResetPassword/></GuestLayout>}/>
+            <Route path="/post/create" element={<CreateVehicle/>}/>
 
             {/* Authenticated User Routes */}
             <Route element={<AuthRoute/>}>
@@ -134,7 +145,6 @@ function AppRoutes() {
                 {/*<Route path="/saved-vehicles" element={<SavedVehicles/>}/>*/}
                 {/*<Route path="/inbox" element={<Inbox/>}/>*/}
                 {/*<Route path="/notifications" element={<Notifications/>}/>*/}
-                <Route path="/post/create" element={<CreateVehicle/>}/>
                 {/*<Route path="/vehicles/:id/edit" element={<EditVehicle/>}/>*/}
             </Route>
 

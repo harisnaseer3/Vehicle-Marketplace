@@ -33,11 +33,23 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::middleware('auth:api')->get('/auth/check', [AuthController::class, 'checkAuthStatus']);
 
 
 //post
-Route::get('/posts', [PostsController::class, 'index']);
-Route::get('/post/{id}', [PostsController::class, 'show']);
+Route::get('/vehicles', [PostsController::class, 'index']);
+Route::get('/bikes', [PostsController::class, 'getAllBikes']);
+Route::get('/vehicles/{id}', [PostsController::class, 'show']);
+Route::get('/bike/{id}', [PostsController::class, 'showBikes']);
+Route::post('/create-post', [PostsController::class, 'create']);
+Route::get('/vehicle/search', [CategoryController::class, 'filterSearch']);
+Route::get('/vehicle/simple-search', [CategoryController::class, 'search']);
+Route::get('/certified-vehicles', [PostsController::class, 'getCertifiedVehicle']);
+Route::get('/managed-by-us-vehicles', [PostsController::class, 'getManagedByUsVehicle']);
+
+//vehicle
+Route::get('/featured-vehicles', [FeaturedVehicleController::class, 'index']);
+Route::get('/featured-bikes', [FeaturedVehicleController::class, 'getFeaturedBikes']);
 
 //categories
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -50,15 +62,15 @@ Route::get('/fuel-type', [CategoryController::class, 'getFuelType']);
 Route::get('/body-type', [CategoryController::class, 'getBodyType']);
 Route::get('/condition-type', [CategoryController::class, 'getCondition']);
 
-//vehicle
-Route::get('/featured-vehicles', [FeaturedVehicleController::class, 'index']);
 // Protected Routes (JWT Token Required)
 Route::middleware('auth:api')->group(function () {
-    Route::post('/create-post', [PostsController::class, 'create']);
     Route::put('/update-post/{id}', [PostsController::class, 'update']);
     Route::delete('/posts/{id}', [PostsController::class, 'destroy']);
     Route::post('/posts/{id}/restore', [PostsController::class, 'restore']);
     Route::delete('/posts/{id}/force', [PostsController::class, 'forceDelete']);
+
+    Route::put('/make-certified/{id}', [PostsController::class, 'makeCertified']);
+    Route::put('/make-manage-by-us/{id}', [PostsController::class, 'makeManageByUs']);
 
 
     Route::post('/logout', [AuthController::class, 'logout']);

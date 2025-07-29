@@ -25,7 +25,7 @@ const VehicleDetails = () => {
     useEffect(() => {
         const fetchVehicleDetails = async () => {
             try {
-                const response = await axios.get(`/post/${id}`);
+                const response = await axios.get(`/vehicles/${id}`);
 
                 if (response.data.success && response.data.data) {
                     setVehicle(response.data.data);
@@ -151,12 +151,18 @@ const VehicleDetails = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
                     <div>
                         <div className="relative h-96 bg-gray-100 rounded-lg overflow-hidden">
+                            {/* Blue tick for certified vehicles */}
+                            {vehicle.certified === 1 && (
+                                <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
+                                    Certified
+                                </div>
+                            )}
                             <img
                                 className="w-full h-full object-contain"
-                                src={vehicle.images?.length ? `/storage/${vehicle.images[activeImageIndex]}` : '/images/vehicle-placeholder.jpg'}
+                                src={vehicle.images?.length ? `/storage/${vehicle.images[activeImageIndex]}` : '/images/hero-car.jpg'}
                                 alt={vehicle.title}
                                 onError={(e) => {
-                                    e.target.src = '/images/vehicle-placeholder.jpg';
+                                    e.target.src = '/images/hero-car.jpg';
                                 }}
                             />
                         </div>
@@ -173,7 +179,7 @@ const VehicleDetails = () => {
                                             src={`/storage/${image}`}
                                             alt={`Thumbnail ${index + 1}`}
                                             onError={(e) => {
-                                                e.target.src = '/images/vehicle-placeholder.jpg';
+                                                e.target.src = '/images/hero-car.jpg';
                                             }}
                                         />
                                     </button>

@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react';
 import axios from '@/axios.js';
-import FeaturedVehicles from '@/Components/Vehicles/FeaturedVehicles.jsx';
-import { Link, useNavigate  } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext.jsx';
 
 const AllVehicles = () => {
-    // const { user } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [makes, setMakes] = useState([]);
+    const [models, setModels] = useState([]);
     const [filters, setFilters] = useState({
-        make: '',
-        model: '',
-        minPrice: '',
-        maxPrice: '',
+        make_id: '',
+        model_id: '',
+        min_price: '',
+        max_price: '',
         year: '',
+        condition: ''
     });
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -24,35 +27,87 @@ const AllVehicles = () => {
         last_page: 1,
     });
 
+    // Initialize filters from URL params
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        setFilters({
+            make_id: queryParams.get('make_id') || '',
+            model_id: queryParams.get('model_id') || '',
+            min_price: queryParams.get('min_price') || '',
+            max_price: queryParams.get('max_price') || '',
+            year: queryParams.get('year') || '',
+            condition: queryParams.get('condition') || ''
+        });
+    }, [location.search]);
+
+    // Fetch makes on component mount
+    useEffect(() => {
+        const fetchMakes = async () => {
+            try {
+                const response = await axios.get('/makes/1');
+                setMakes(response.data?.data || []);
+            } catch (err) {
+                console.error("Failed to fetch makes:", err);
+            }
+        };
+        fetchMakes();
+    }, []);
+
+    // Fetch models when make is selected
+    useEffect(() => {
+        if (!filters.make_id) {
+            setModels([]);
+            return;
+        }
+
+        const fetchModels = async () => {
+            try {
+                const response = await axios.get(`/makes/${filters.make_id}/models`);
+                setModels(response.data?.data || []);
+            } catch (err) {
+                console.error("Failed to fetch models:", err);
+                setModels([]);
+            }
+        };
+        fetchModels();
+    }, [filters.make_id]);
+
+    // Fetch vehicles when filters or pagination changes
     useEffect(() => {
         const fetchAllVehicles = async () => {
             try {
-                const response = await axios.get('/posts', {
-                    params: {
-                        ...filters,
-                        page: pagination.current_page,
-                        per_page: pagination.per_page
-                    }
-                });
+                setLoading(true);
+
+                // Create params object with all filters
+                const params = new URLSearchParams();
+                if (filters.make_id) params.append('make_id', filters.make_id);
+                if (filters.model_id) params.append('model_id', filters.model_id);
+                if (filters.min_price) params.append('min_price', filters.min_price);
+                if (filters.max_price) params.append('max_price', filters.max_price);
+                if (filters.year) params.append('year', filters.year);
+                if (filters.condition) params.append('condition', filters.condition);
+                params.append('page', pagination.current_page);
+                params.append('per_page', pagination.per_page);
+
+                const response = await axios.get('/vehicles', { params });
 
                 if (response.data.success && response.data.data) {
                     setVehicles(response.data.data.data);
-                    setPagination(prev => ({
-                        ...prev,
+                    setPagination({
                         current_page: response.data.data.current_page,
                         per_page: response.data.data.per_page,
                         total: response.data.data.total,
                         last_page: response.data.data.last_page,
-                    }));
+                    });
                 } else {
                     throw new Error(response.data.message || 'Invalid data format received');
                 }
-                setLoading(false);
             } catch (err) {
                 setError(err.message || 'Failed to load vehicles');
                 setVehicles([]);
-                setLoading(false);
                 console.error('API Error:', err.response?.data || err.message);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -61,13 +116,22 @@ const AllVehicles = () => {
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters(prev => ({
-            ...prev,
-            [name]: value
-        }));
-        // Reset to first page when filters change
+        const newFilters = {
+            ...filters,
+            [name]: value,
+            ...(name === 'make_id' && { model_id: '' }) // Reset model when make changes
+        };
+        setFilters(newFilters);
         setPagination(prev => ({ ...prev, current_page: 1 }));
+
+        // Update URL
+        const params = new URLSearchParams();
+        Object.entries(newFilters).forEach(([key, val]) => {
+            if (val) params.set(key, val);
+        });
+        navigate(`?${params.toString()}`, { replace: true });
     };
+
 
     const handlePageChange = (page) => {
         setPagination(prev => ({ ...prev, current_page: page }));
@@ -101,11 +165,32 @@ const AllVehicles = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            {/* Breadcrumb Navigation */}
+            <nav className="flex mb-6" aria-label="Breadcrumb">
+                <ol className="inline-flex items-center space-x-1 md:space-x-3">
+                    <li className="inline-flex items-center">
+                        <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                            Home
+                        </Link>
+                    </li>
+                    <li>
+                        <div className="flex items-center">
+                            <svg className="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                            </svg>
+                            <Link to="/vehicles" className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">
+                                Vehicles
+                            </Link>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900">All Vehicles</h1>
                 <Link
                     to="/post/create"
-                    // onClick={handleAddVehicleClick}
+                    onClick={handleAddVehicleClick}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
                 >
                     Add New Vehicle
@@ -118,32 +203,39 @@ const AllVehicles = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Make</label>
-                        <input
-                            type="text"
-                            name="make"
-                            value={filters.make}
+                        <select
+                            name="make_id"
+                            value={filters.make_id}
                             onChange={handleFilterChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
-                            placeholder="Any make"
-                        />
+                        >
+                            <option value="">All Makes</option>
+                            {makes.map(make => (
+                                <option key={make.id} value={make.id}>{make.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Model</label>
-                        <input
-                            type="text"
-                            name="model"
-                            value={filters.model}
+                        <select
+                            name="model_id"
+                            value={filters.model_id}
                             onChange={handleFilterChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
-                            placeholder="Any model"
-                        />
+                            disabled={!filters.make_id}
+                        >
+                            <option value="">All Models</option>
+                            {models.map(model => (
+                                <option key={model.id} value={model.id}>{model.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Min Price</label>
                         <input
                             type="number"
-                            name="minPrice"
-                            value={filters.minPrice}
+                            name="min_price"
+                            value={filters.min_price}
                             onChange={handleFilterChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                             placeholder="Min price"
@@ -153,23 +245,25 @@ const AllVehicles = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Max Price</label>
                         <input
                             type="number"
-                            name="maxPrice"
-                            value={filters.maxPrice}
+                            name="max_price"
+                            value={filters.max_price}
                             onChange={handleFilterChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                             placeholder="Max price"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                        <input
-                            type="number"
-                            name="year"
-                            value={filters.year}
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                        <select
+                            name="condition"
+                            value={filters.condition}
                             onChange={handleFilterChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
-                            placeholder="Any year"
-                        />
+                        >
+                            <option value="">All Conditions</option>
+                            <option value="new">New</option>
+                            <option value="used">Used</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -179,13 +273,21 @@ const AllVehicles = () => {
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {vehicles.map((vehicle) => (
-                            <div key={vehicle.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                                <div className="h-48 bg-gray-200 overflow-hidden">
+                            <div key={vehicle.id}
+                                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                                <div className="h-48 bg-gray-200 overflow-hidden relative">
+                                    {vehicle.certified === 1 && (
+                                        <div
+                                            className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
+                                            Certified
+                                        </div>
+                                    )}
                                     <img
                                         className="w-full h-full object-cover"
-                                        src={vehicle.images?.length ?
-                                            `/storage/${vehicle.images[0]}` :
-                                            '/images/vehicle-placeholder.jpg'
+                                        src={
+                                            vehicle.images?.length
+                                                ? `/storage/${vehicle.images[0]}`
+                                                : '/images/vehicle-placeholder.jpg'
                                         }
                                         alt={vehicle.title}
                                         onError={(e) => {
@@ -193,8 +295,9 @@ const AllVehicles = () => {
                                         }}
                                     />
                                 </div>
+
                                 <div className="p-4">
-                                    <div className="flex justify-between items-start">
+                                <div className="flex justify-between items-start">
                                         <h3 className="text-lg font-semibold text-gray-900">
                                             {vehicle.make?.name} {vehicle.model?.name}
                                         </h3>
@@ -213,7 +316,7 @@ const AllVehicles = () => {
                                             Rs. {vehicle.price ? parseFloat(vehicle.price).toLocaleString() : 'N/A'}
                                         </span>
                                         <Link
-                                            to={`/vehicles/${vehicle.id}`}
+                                            to={`/vehicle/${vehicle.id}`}
                                             className="text-blue-600 hover:text-blue-800 font-medium"
                                         >
                                             View Details
@@ -243,7 +346,7 @@ const AllVehicles = () => {
                             </button>
 
                             {/* Page numbers */}
-                            {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
+                            {Array.from({length: Math.min(5, pagination.last_page)}, (_, i) => {
                                 let pageNum;
                                 if (pagination.last_page <= 5) {
                                     pageNum = i + 1;

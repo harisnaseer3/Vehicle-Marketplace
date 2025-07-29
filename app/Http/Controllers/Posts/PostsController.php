@@ -15,20 +15,56 @@ use Illuminate\Support\Facades\Storage;
 class PostsController extends BaseController
 {
     use AuthorizesRequests;
+
     public function index(Request $request)
     {
         try {
             $per_page = $request->per_page ?? 12;
-            $vehicles = Post::with(StatusEnum::POST_RELATIONSHIP)->paginate($per_page);
-            return $this->sendResponse($vehicles->toArray(), 'vehicles retrieved successfully.');
+
+            $query = Post::query()
+                ->with(StatusEnum::POST_RELATIONSHIP)
+                ->whereHas('category', function ($q) {
+                    $q->where('name', 'Cars');
+                });
+
+            if ($request->has('condition')) {
+                $query->where('condition', $request->input('condition'));
+            }
+
+            $vehicles = $query->paginate($per_page);
+
+            return $this->sendResponse($vehicles->toArray(), 'Vehicles retrieved successfully.');
         } catch (\Exception $e) {
-            return $this->sendError($e->getMessage());
+            return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
+        }
+    }
+
+    public function getAllBikes(Request $request)
+    {
+        try {
+            $per_page = $request->per_page ?? 12;
+
+            $query = Post::query()
+                ->with(StatusEnum::POST_RELATIONSHIP)
+                ->whereHas('category', function ($q) {
+                    $q->where('name', 'Bikes');
+                });
+
+            if ($request->has('condition')) {
+                $query->where('condition', $request->input('condition'));
+            }
+
+            $vehicles = $query->paginate($per_page);
+
+            return $this->sendResponse($vehicles->toArray(), 'Vehicles retrieved successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
         }
     }
 
     public function create(CreatePostRequest $request)
     {
-        $this->authorize('create-post');
+//        $this->authorize('create-post');
         try {
             DB::beginTransaction();
 
@@ -44,7 +80,7 @@ class PostsController extends BaseController
             }
 
             $vehicle = Post::create([
-                'user_id' => $request->user()->id,
+                'user_id' => $request->user_id,
                 'category_id' => $request->category_id,
                 'make_id' => $request->make_id,
                 'model_id' => $request->model_id,
@@ -90,6 +126,17 @@ class PostsController extends BaseController
     }
 
     public function show($id)
+    {
+        try {
+            $vehicle = Post::with(StatusEnum::POST_RELATIONSHIP)->findOrFail($id);
+
+            return $this->sendResponse($vehicle, 'Post retrieved successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function showBikes($id)
     {
         try {
             $vehicle = Post::with(StatusEnum::POST_RELATIONSHIP)->findOrFail($id);
@@ -186,6 +233,77 @@ class PostsController extends BaseController
         } catch (\Exception $e) {
             return $this->sendError(
                 'Failed to delete vehicle: ' . $e->getMessage(),
+                $e->getCode() ?: 500
+            );
+        }
+    }
+
+    public function makeCertified($id)
+    {
+        try {
+            $this->authorize('make-certified-vehicle');
+            $post = Post::findOrFail($id);
+            if ($post->certified) {
+                return $this->sendResponse([], 'Post is already certified');
+            }
+            $post->update([
+                'certified' => 1,
+            ]);
+
+            return $this->sendResponse($post, 'Post successfully made certified');
+        } catch (\Exception $e) {
+            return $this->sendError(
+                'Failed to make certified vehicle: ' . $e->getMessage(),
+                $e->getCode() ?: 500
+            );
+        }
+    }
+
+    public function getCertifiedVehicle()
+    {
+        try {
+            $per_page = $requst->per_page ?? 12;
+            $post = Post::query()->where('certified', 1)->paginate($per_page);
+            return $this->sendResponse($post, 'Certified vehicle retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError(
+                'Failed to fetch certified vehicle: ' . $e->getMessage(),
+                $e->getCode() ?: 500
+            );
+        }
+    }
+
+    public function makeManageByUs($id)
+    {
+        try {
+            $this->authorize('make-certified-vehicle');
+            $post = Post::findOrFail($id);
+            if ($post->managed_by_us) {
+                return $this->sendResponse([], 'Post is already managed by us');
+            }
+            $post->update([
+                'managed_by_us' => 1,
+            ]);
+
+            return $this->sendResponse($post, 'Post successfully made certified');
+
+        } catch (\Exception $e) {
+            return $this->sendError(
+                'Failed to mange vehicle by us: ' . $e->getMessage(),
+                $e->getCode() ?: 500
+            );
+        }
+    }
+
+    public function getManagedByUsVehicle()
+    {
+        try {
+            $per_page = $requst->per_page ?? 12;
+            $post = Post::query()->where('managed_by_us', 1)->paginate($per_page);
+            return $this->sendResponse($post, 'Managed by us vehicle retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError(
+                'Failed to fetch managed by us vehicle: ' . $e->getMessage(),
                 $e->getCode() ?: 500
             );
         }

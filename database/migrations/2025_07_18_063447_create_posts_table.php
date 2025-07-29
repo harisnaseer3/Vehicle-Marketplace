@@ -33,6 +33,8 @@ return new class extends Migration
             $table->json('features')->nullable();
             $table->json('images')->nullable();
             $table->integer('is_featured')->default(0);
+            $table->integer('certified')->default(0);
+            $table->integer('managed_by_us')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

@@ -42,7 +42,7 @@ const Create = () => {
         condition: '',
         location: '',
         is_featured: false,
-        color: 'red'
+        color: 'white'
     });
 
     // Fetch initial options on component mount
@@ -228,7 +228,8 @@ const Create = () => {
             });
 
             if (response.data.success) {
-                navigate(`/vehicles/${response.data.data.id}`);
+                // navigate(`/vehicles/${response.data.data.id}`);
+                navigate(`/vehicles`);
             } else {
                 throw new Error(response.data.message || 'Failed to create vehicle');
             }

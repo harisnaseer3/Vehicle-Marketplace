@@ -7,8 +7,10 @@ use App\Http\Controllers\BaseController;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Make;
+use App\Models\Post;
 use App\Models\VehicleModel;
 use App\Models\VehicleRegister;
+use Illuminate\Http\Request;
 
 class CategoryController extends BaseController
 {
@@ -17,7 +19,7 @@ class CategoryController extends BaseController
         try {
             $categories = Category::all();
             return $this->sendResponse($categories, 'Categories fetched successfully.');
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $this->sendError(
                 'Failed to fetch categories: ' . $e->getMessage(),
                 $e->getCode() ?: 500
@@ -47,6 +49,66 @@ class CategoryController extends BaseController
             return $this->sendResponse($models, 'Models fetched successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Failed to fetch models: ' . $e->getMessage(), $e->getCode() ?: 500);
+        }
+    }
+
+    public function filterSearch(Request $request)
+    {
+        try {
+            $query = Post::query()->with(StatusEnum::POST_RELATIONSHIP);
+
+            if ($request->filled('make_id')) {
+                $query->where('make_id', $request->make_id);
+            }
+
+            if ($request->filled('model_id')) {
+                $query->where('model_id', $request->model_id);
+            }
+
+            if ($request->filled('min_price')) {
+                $query->where('price', '>=', $request->min_price);
+            }
+
+            if ($request->filled('max_price')) {
+                $query->where('price', '<=', $request->max_price);
+            }
+
+
+            $vehicles = $query->paginate(12);
+            return $this->sendResponse($vehicles, 'Vehicles fetched successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Failed to fetch vehicles: ' . $e->getMessage(), $e->getCode() ?: 500);
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $paginate = $request->per_page ?? 12;
+            $query = Post::query()->with(StatusEnum::POST_RELATIONSHIP);
+
+            $search = $request->search;
+
+            if ($search) {
+                // Split the search string into individual words
+                $keywords = preg_split('/\s+/', $search, -1, PREG_SPLIT_NO_EMPTY);
+
+                $query->where(function ($outerQuery) use ($keywords) {
+                    foreach ($keywords as $word) {
+                        $outerQuery->where(function ($q) use ($word) {
+                            $q->whereHas('make', fn($make) => $make->where('name', 'like', "%{$word}%")
+                            )->orWhereHas('model', fn($model) => $model->where('name', 'like', "%{$word}%")
+                            )->orWhere('year', 'like', "%{$word}%");
+                        });
+                    }
+                });
+            }
+
+            $vehicles = $query->paginate($paginate);
+
+            return $this->sendResponse($vehicles, 'Vehicles fetched successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Failed to fetch vehicles: ' . $e->getMessage(), $e->getCode() ?: 500);
         }
     }
 

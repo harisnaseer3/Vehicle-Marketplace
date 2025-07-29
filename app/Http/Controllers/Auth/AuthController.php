@@ -68,12 +68,44 @@ class AuthController extends BaseController
                 'token' => $token,
                 'user' => $user
             ]);
-        
+
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
         }
     }
 
+    public function checkAuthStatus()
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No authenticated user',
+                    'isLoggedIn' => false
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->getRememberToken(),
+                    'permissions' => $user->getAllPermissions()->pluck('name')->toArray()
+                ],
+                'isLoggedIn' => true
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], $e->getCode() ?: 500);
+        }
+    }
 
     public function logout(Request $request)
     {

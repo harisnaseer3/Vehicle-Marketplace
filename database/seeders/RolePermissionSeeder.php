@@ -31,6 +31,7 @@ class RolePermissionSeeder extends Seeder
             'dashboard',
             'manage-users',
             'suspend-users',
+            'make-certified-vehicle',
 
             //post
             'create-post',
