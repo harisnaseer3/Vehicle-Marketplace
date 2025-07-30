@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Models\User;
@@ -138,5 +139,28 @@ class AuthController extends BaseController
         return $status == Password::PASSWORD_RESET
             ? response()->json(['message' => __($status)])
             : response()->json(['errors' => ['email' => [__($status)]]], 422);
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        try {
+            $user = auth()->user();
+
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'message' => 'Current password is incorrect.'
+                ], 422);
+            }
+
+            $newPassword = $request->new_password;
+
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            return $this->sendResponse($user, "Password Changed Successfully");
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
+        }
     }
 }

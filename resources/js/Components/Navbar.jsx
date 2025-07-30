@@ -139,8 +139,8 @@ const Navbar = () => {
                                         {isDropdownOpen && (
                                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                                                 <RouterLink to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</RouterLink>
-                                                <RouterLink to="/my-vehicles" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Vehicles</RouterLink>
-                                                <RouterLink to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</RouterLink>
+                                                <RouterLink to="/user/vehicles" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Vehicles</RouterLink>
+                                                <RouterLink to="/user/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</RouterLink>
                                                 <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</button>
                                             </div>
                                         )}
@@ -189,8 +189,8 @@ const Navbar = () => {
                             {auth.user ? (
                                 <>
                                     <RouterLink to="/dashboard" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Dashboard</RouterLink>
-                                    <RouterLink to="/my-vehicles" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">My Vehicles</RouterLink>
-                                    <RouterLink to="/profile" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Profile</RouterLink>
+                                    <RouterLink to="/user/vehicles" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">My Vehicles</RouterLink>
+                                    <RouterLink to="/user/profile" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Profile</RouterLink>
                                     <button onClick={handleLogout} className="w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100">Sign Out</button>
                                 </>
                             ) : (

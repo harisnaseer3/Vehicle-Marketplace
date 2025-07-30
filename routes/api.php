@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Vehicle\FeaturedVehicleController;
 use App\Http\Controllers\Category\CategoryController;
+use App\Http\Controllers\Auth\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,15 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-Route::middleware('auth:api')->get('/auth/check', [AuthController::class, 'checkAuthStatus']);
+Route::post('/change-password', [AuthController::class, 'changePassword']);
+Route::middleware('auth:api')->group(function () {
+    Route::get('/user/profile', [ProfileController::class, 'show']);
+    Route::get('/user/vehicles', [ProfileController::class, 'userVehicles']);
+    Route::put('/user/profile/update', [ProfileController::class, 'update']);
+    Route::delete('/user/profile/delete', [ProfileController::class, 'destroy']);
+    Route::get('/auth/check', [AuthController::class, 'checkAuthStatus']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
 
 //post
@@ -71,7 +80,4 @@ Route::middleware('auth:api')->group(function () {
 
     Route::put('/make-certified/{id}', [PostsController::class, 'makeCertified']);
     Route::put('/make-manage-by-us/{id}', [PostsController::class, 'makeManageByUs']);
-
-
-    Route::post('/logout', [AuthController::class, 'logout']);
 });

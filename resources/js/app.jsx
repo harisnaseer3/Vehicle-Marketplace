@@ -25,6 +25,7 @@ import Login from '@/Pages/Auth/Login';
 import Register from '@/Pages/Auth/Register';
 import ForgotPassword from '@/Pages/Auth/ForgotPassword';
 import ResetPassword from '@/Pages/Auth/ResetPassword';
+import Profile from '@/Pages/Auth/Profile.jsx'
 
 // User Pages
 // import Dashboard from '@/Pages/User/Dashboard';
@@ -35,12 +36,13 @@ import ResetPassword from '@/Pages/Auth/ResetPassword';
 
 // Listing Management
 import CreateVehicle from '@/Pages/Post/create.jsx';
-// import EditVehicle from '@/Pages/Post/Edit';
+import EditVehicle from '@/Pages/Post/Edit';
 
 // Admin Pages
 // import AdminLogin from '@/Pages/Admin/Login';
 import AdminDashboard from '@/Pages/Admin/Dashboard';
 import BikeDetails from "@/Components/Vehicles/BikeDetails.jsx";
+import AuthLayout from "@/Layouts/AuthLayout.jsx";
 // import ManageUsers from '@/Pages/Admin/ManageUsers';
 // import ManageListings from '@/Pages/Admin/ManageListings';
 
@@ -139,13 +141,13 @@ function AppRoutes() {
             <Route path="/post/create" element={<CreateVehicle/>}/>
 
             {/* Authenticated User Routes */}
-            <Route element={<AuthRoute/>}>
-                {/*<Route path="/dashboard" element={<Dashboard/>}/>*/}
+            <Route>
+                <Route path="/user/profile" element={<Profile/>}/>
                 {/*<Route path="/my-listings" element={<MyListings/>}/>*/}
                 {/*<Route path="/saved-vehicles" element={<SavedVehicles/>}/>*/}
                 {/*<Route path="/inbox" element={<Inbox/>}/>*/}
                 {/*<Route path="/notifications" element={<Notifications/>}/>*/}
-                {/*<Route path="/vehicles/:id/edit" element={<EditVehicle/>}/>*/}
+                <Route path="/post/:id/edit" element={<EditVehicle/>}/>
             </Route>
 
             {/* Admin Routes */}

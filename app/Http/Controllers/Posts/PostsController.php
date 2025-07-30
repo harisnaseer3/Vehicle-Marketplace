@@ -220,7 +220,7 @@ class PostsController extends BaseController
 
     public function destroy($id)
     {
-        $this->authorize('create-post');
+//        $this->authorize('create-post');
         try {
             $vehicle = Post::findOrFail($id);
 
