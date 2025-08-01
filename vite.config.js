@@ -3,7 +3,8 @@ import laravel from 'laravel-vite-plugin'
 import react from '@vitejs/plugin-react'
 
 // Replace this with your machine's LAN IP or hostname
-const DEV_HOST = '192.168.18.104'
+// const DEV_HOST = '192.168.18.104'
+const DEV_HOST = '127.0.0.1'
 
 export default defineConfig({
     plugins: [

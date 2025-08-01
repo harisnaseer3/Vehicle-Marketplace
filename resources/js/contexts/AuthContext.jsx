@@ -1,8 +1,7 @@
-// contexts/AuthContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from '@/axios.js';
 
-const AuthContext = createContext();
+const AuthContext = createContext(); // Define first
 
 export const AuthProvider = ({ children }) => {
     const [authState, setAuthState] = useState({
@@ -42,4 +41,5 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+// Define useAuth after AuthContext is initialized
 export const useAuth = () => useContext(AuthContext);

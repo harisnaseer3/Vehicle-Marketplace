@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
 import axios from '@/axios.js';
-import { toast } from 'react-toastify';
-import { FaSpinner, FaSave, FaTimes } from 'react-icons/fa';
+import {toast} from 'react-toastify';
+import {FaSpinner, FaSave, FaTimes} from 'react-icons/fa';
 
 const Edit = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -40,6 +40,13 @@ const Edit = () => {
                     }
                 });
 
+                // Find the specific vehicle by ID
+                // const vehicleData = response.data.data.find(v => v.id === parseInt(id));
+                // console.log('here:', vehicleData);
+                // if (!vehicleData) {
+                //     throw new Error('Vehicle not found');
+                // }
+
                 setVehicle(response.data.data);
                 setFormData({
                     title: response.data.data.title,
@@ -55,6 +62,7 @@ const Edit = () => {
                     location: response.data.data.location,
                     features: response.data.data.features || []
                 });
+                // console.log('eee:',setFormData)
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching vehicle:', error);
@@ -67,7 +75,7 @@ const Edit = () => {
     }, [id, navigate]);
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -110,7 +118,7 @@ const Edit = () => {
             });
 
             toast.success('Vehicle updated successfully');
-            navigate('/user/profile?tab=my-vehicles');
+            navigate('/user/profile');
         } catch (error) {
             console.error('Error updating vehicle:', error);
             toast.error('Failed to update vehicle');
@@ -122,7 +130,7 @@ const Edit = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <FaSpinner className="animate-spin text-4xl text-blue-500" />
+                <FaSpinner className="animate-spin text-4xl text-blue-500"/>
             </div>
         );
     }
@@ -134,7 +142,7 @@ const Edit = () => {
                     <h2 className="text-2xl font-bold">Vehicle not found</h2>
                     <p className="mt-2">The vehicle you're trying to edit doesn't exist.</p>
                     <button
-                        onClick={() => navigate('/user/profile?tab=my-vehicles')}
+                        onClick={() => navigate('/user/profile')}
                         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     >
                         Back to My Vehicles
@@ -184,7 +192,7 @@ const Edit = () => {
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Price ($)</label>
+                                    <label className="block text-sm font-medium text-gray-700">Price (PKR)</label>
                                     <input
                                         type="number"
                                         name="price"
@@ -368,7 +376,7 @@ const Edit = () => {
                                 onClick={() => navigate('/user/profile?tab=my-vehicles')}
                                 className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
-                                <FaTimes className="mr-2" /> Cancel
+                                <FaTimes className="mr-2"/> Cancel
                             </button>
                             <button
                                 type="submit"
@@ -377,11 +385,11 @@ const Edit = () => {
                             >
                                 {saving ? (
                                     <>
-                                        <FaSpinner className="animate-spin mr-2" /> Saving...
+                                        <FaSpinner className="animate-spin mr-2"/> Saving...
                                     </>
                                 ) : (
                                     <>
-                                        <FaSave className="mr-2" /> Save Changes
+                                        <FaSave className="mr-2"/> Save Changes
                                     </>
                                 )}
                             </button>

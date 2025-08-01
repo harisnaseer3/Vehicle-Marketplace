@@ -19,9 +19,10 @@ class UserSeeder extends Seeder
         $admin = User::firstOrCreate([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
-            'phone' => '03441518890',
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
+            'phone' => '03441518890',
+            'address' => 'ABC, Islamabad',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -30,9 +31,10 @@ class UserSeeder extends Seeder
         $user = User::firstOrCreate([
             'name' => 'User',
             'email' => 'user@user.com',
-            'phone' => '03441518891',
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
+            'phone' => '03441518891',
+            'address' => 'ABC, Islamabad',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

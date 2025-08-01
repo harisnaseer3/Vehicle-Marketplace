@@ -25,6 +25,10 @@ class AuthController extends BaseController
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
+                'address' => $request->address,
+                'image' => $request->hasFile('image')
+                    ? $request->file('image')->store('images/profile', 'public')
+                    : null,
             ]);
 
             // Assign default role if not provided
@@ -90,13 +94,7 @@ class AuthController extends BaseController
 
             return response()->json([
                 'success' => true,
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->getRememberToken(),
-                    'permissions' => $user->getAllPermissions()->pluck('name')->toArray()
-                ],
+                'user' => $user,
                 'isLoggedIn' => true
             ]);
 

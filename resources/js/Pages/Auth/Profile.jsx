@@ -457,7 +457,7 @@ const Profile = () => {
                                     <h3 className="text-lg font-medium leading-6 text-gray-900">Saved Vehicles</h3>
                                 </div>
                                 <div className="px-6 py-5">
-                                    {savedVehicles.length === 0 ? (
+                                    {myVehicles.length === 0 ? (
                                         <div className="text-center py-8">
                                             <FaHeart className="mx-auto h-12 w-12 text-gray-400"/>
                                             <h3 className="mt-2 text-sm font-medium text-gray-900">No saved

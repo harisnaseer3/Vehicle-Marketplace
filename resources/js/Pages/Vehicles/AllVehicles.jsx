@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext.jsx';
 
 const AllVehicles = () => {
-    const { user } = useAuth();
+    // const { user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [vehicles, setVehicles] = useState([]);

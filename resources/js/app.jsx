@@ -50,9 +50,6 @@ import AuthLayout from "@/Layouts/AuthLayout.jsx";
 // import NotFound from '@/Pages/Errors/NotFound';
 // import Unauthorized from '@/Pages/Errors/Unauthorized';
 
-// function App() {
-//     return <AppRoutes/>;
-// }
 
 function App() {
     return (

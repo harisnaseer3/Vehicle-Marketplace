@@ -10,7 +10,7 @@ const Navbar = () => {
     const dropdownRef = useRef(null);
     const [auth, setAuth] = useState(() => {
         const token = localStorage.getItem('auth_token');
-        return {user: token ? { profile_photo_url: "/images/default-profile.png" } : null};
+        return {user: token ? {profile_photo_url: "/images/default-profile.png"} : null};
     });
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const Navbar = () => {
     const handleSearch = async () => {
         try {
             const response = await axios.get("vehicle/simple-search", {
-                params: { search }
+                params: {search}
             });
             navigate(`/vehicles/search?search=${encodeURIComponent(search)}`);
         } catch (error) {
@@ -61,15 +61,45 @@ const Navbar = () => {
 
             // Clear local storage and auth state
             localStorage.removeItem('auth_token');
-            setAuth({ user: null });
+            setAuth({user: null});
             navigate('/');
         } catch (error) {
             // Even if the request fails, we should clear the local token
             localStorage.removeItem('auth_token');
-            setAuth({ user: null });
+            setAuth({user: null});
             navigate('/login');
         }
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+            axios.get('/auth/check', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+                .then(response => {
+                    const user = response.data.user;
+
+                    const image_url = user.image
+                        ? `/storage/${user.image}`
+                        : '/images/default-profile.png';
+
+                    setAuth({
+                        user: {
+                            ...user,
+                            image_url: image_url
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching user data:", error);
+                    setAuth({user: null});
+                });
+        }
+    }, []);
+
 
     return (
         <>
@@ -90,7 +120,7 @@ const Navbar = () => {
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex justify-between items-center h-16">
                         <RouterLink to="/" className="flex items-center">
-                            <FaCar className="h-8 w-8 text-red-600" />
+                            <FaCar className="h-8 w-8 text-red-600"/>
                             <span className="ml-2 text-2xl font-bold text-gray-900">AutoMarket</span>
                         </RouterLink>
 
@@ -107,55 +137,71 @@ const Navbar = () => {
                                 <button
                                     onClick={handleSearch}
                                     className="absolute right-0 top-0 h-full px-4 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
-                                    <FaSearch />
+                                    <FaSearch/>
                                 </button>
                             </div>
                         </div>
 
                         <div className="hidden md:flex items-center space-x-4">
-                            <RouterLink to="/post/create" className="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                            <RouterLink to="/post/create"
+                                        className="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
                                 Sell Vehicle
                             </RouterLink>
 
                             {auth.user ? (
-                                <>
-                                    <button className="p-1 text-gray-600 hover:text-blue-600 relative">
-                                        <FaBell className="h-5 w-5" />
-                                        <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-600"></span>
-                                    </button>
-                                    <div className="relative" ref={dropdownRef}>
-                                        <button
-                                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                            className="flex items-center space-x-2"
-                                        >
-                                            <img
-                                                className="h-8 w-8 rounded-full"
-                                                src={auth.user.profile_photo_url || '/images/default-profile.png'}
-                                                alt="User profile"
-                                            />
-                                            <IoMdArrowDropdown className="text-gray-500" />
+                                    <>
+                                        <button className="p-1 text-gray-600 hover:text-blue-600 relative">
+                                            <FaBell className="h-5 w-5"/>
+                                            <span
+                                                className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-600"></span>
                                         </button>
+                                        <div className="relative" ref={dropdownRef}>
+                                            <button
+                                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                                className="flex items-center space-x-2"
+                                            >
+                                                <img
+                                                    className="h-8 w-8 rounded-full"
+                                                    src={auth.user?.image_url || '/images/default-profile.png'}
+                                                    alt="User profile"
+                                                />
+                                                <IoMdArrowDropdown className="text-gray-500"/>
+                                            </button>
 
-                                        {isDropdownOpen && (
-                                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                                <RouterLink to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</RouterLink>
-                                                <RouterLink to="/user/vehicles" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Vehicles</RouterLink>
-                                                <RouterLink to="/user/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</RouterLink>
-                                                <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </>
+                                            {isDropdownOpen && (
+                                                <div
+                                                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                                    <RouterLink to="/dashboard"
+                                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</RouterLink>
+                                                    <RouterLink to="/user/profile"
+                                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My
+                                                        Vehicles</RouterLink>
+                                                    <RouterLink to="/user/profile"
+                                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My
+                                                        Profile</RouterLink>
+                                                    <button onClick={handleLogout}
+                                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign
+                                                        Out
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
                             ) : (
                                 <>
-                                    <RouterLink to="/login" className="px-4 py-2 text-blue-600 hover:text-blue-800">Login</RouterLink>
-                                    <button onClick={handleRegisterClick} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Sign Up</button>
+                                    <RouterLink to="/login"
+                                                className="px-4 py-2 text-blue-600 hover:text-blue-800">Login</RouterLink>
+                                    <button onClick={handleRegisterClick}
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Sign
+                                        Up
+                                    </button>
                                 </>
                             )}
                         </div>
 
-                        <button className="md:hidden p-2 text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                            <FaBars className="h-6 w-6" />
+                        <button className="md:hidden p-2 text-gray-600 hover:text-blue-600"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                            <FaBars className="h-6 w-6"/>
                         </button>
                     </div>
                 </div>
@@ -163,11 +209,19 @@ const Navbar = () => {
                 <div className="bg-gray-100 border-t border-gray-200">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="flex space-x-6 overflow-x-auto py-2 hide-scrollbar">
-                            <RouterLink to="/vehicles?condition=used" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Used Cars</RouterLink>
-                            <RouterLink to="/vehicles?condition=new" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">New Cars</RouterLink>
-                            <RouterLink to="/bikes" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Bikes</RouterLink>
-                            <RouterLink to="/autoparts" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Auto Parts</RouterLink>
-                            <RouterLink to="/dealers" className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Dealers</RouterLink>
+                            <RouterLink to="/vehicles?condition=used"
+                                        className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Used
+                                Cars</RouterLink>
+                            <RouterLink to="/vehicles?condition=new"
+                                        className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">New
+                                Cars</RouterLink>
+                            <RouterLink to="/bikes"
+                                        className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Bikes</RouterLink>
+                            <RouterLink to="/autoparts"
+                                        className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Auto
+                                Parts</RouterLink>
+                            <RouterLink to="/dealers"
+                                        className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-blue-600">Dealers</RouterLink>
                         </div>
                     </div>
                 </div>
@@ -182,21 +236,32 @@ const Navbar = () => {
                                     className="w-full py-2 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                                 <button className="absolute right-3 top-2 text-gray-500">
-                                    <FaSearch />
+                                    <FaSearch/>
                                 </button>
                             </div>
-                            <RouterLink to="/post/create" className="block px-3 py-2 text-white bg-red-600 rounded-md">Sell Vehicle</RouterLink>
+                            <RouterLink to="/post/create" className="block px-3 py-2 text-white bg-red-600 rounded-md">Sell
+                                Vehicle</RouterLink>
                             {auth.user ? (
                                 <>
-                                    <RouterLink to="/dashboard" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Dashboard</RouterLink>
-                                    <RouterLink to="/user/vehicles" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">My Vehicles</RouterLink>
-                                    <RouterLink to="/user/profile" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Profile</RouterLink>
-                                    <button onClick={handleLogout} className="w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100">Sign Out</button>
+                                    <RouterLink to="/dashboard"
+                                                className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Dashboard</RouterLink>
+                                    <RouterLink to="/user/vehicles"
+                                                className="block px-3 py-2 text-gray-700 hover:bg-gray-100">My
+                                        Vehicles</RouterLink>
+                                    <RouterLink to="/user/profile"
+                                                className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Profile</RouterLink>
+                                    <button onClick={handleLogout}
+                                            className="w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100">Sign
+                                        Out
+                                    </button>
                                 </>
                             ) : (
                                 <>
-                                    <RouterLink to="/login" className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Login</RouterLink>
-                                    <RouterLink to="/register" className="block px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Sign Up</RouterLink>
+                                    <RouterLink to="/login"
+                                                className="block px-3 py-2 text-gray-700 hover:bg-gray-100">Login</RouterLink>
+                                    <RouterLink to="/register"
+                                                className="block px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Sign
+                                        Up</RouterLink>
                                 </>
                             )}
                         </div>

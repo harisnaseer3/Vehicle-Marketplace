@@ -8,13 +8,16 @@ const Register = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        phone: '',
         password: '',
         password_confirmation: '',
+        phone: '',
+        address: '',
+        image: null,
         terms: false,
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [previewImage, setPreviewImage] = useState(null);
 
     const handleChange = (e) => {
         const {name, value, type, checked} = e.target;
@@ -23,13 +26,42 @@ const Register = () => {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData(prev => ({
+                ...prev,
+                image: file
+            }));
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         setErrors({});
 
         try {
-            const response = await axios.post('/register', formData);
+            const formDataToSend = new FormData();
+            for (const key in formData) {
+                if (formData[key] !== null) {
+                    formDataToSend.append(key, formData[key]);
+                }
+            }
+
+            const response = await axios.post('/register', formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
 
             // Save token and redirect
             localStorage.setItem('access_token', response.data.token);
@@ -136,21 +168,77 @@ const Register = () => {
                             </div>
                         </div>
 
-                        {/* Password confirmation (full width) */}
+                        {/* Password confirmation in same row as password */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
+                                    Confirm Password
+                                </label>
+                                <input
+                                    id="password_confirmation"
+                                    name="password_confirmation"
+                                    type="password"
+                                    autoComplete="new-password"
+                                    required
+                                    value={formData.password_confirmation}
+                                    onChange={handleChange}
+                                    className={`mt-1 block w-full px-3 py-2 border ${errors.password_confirmation ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                />
+                                {errors.password_confirmation && <p className="mt-1 text-sm text-red-600">{errors.password_confirmation}</p>}
+                            </div>
+                        </div>
+
+                        {/* Address textarea (full width) */}
                         <div>
-                            <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
-                                Confirm Password
+                            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                                Address
                             </label>
-                            <input
-                                id="password_confirmation"
-                                name="password_confirmation"
-                                type="password"
-                                autoComplete="new-password"
+                            <textarea
+                                id="address"
+                                name="address"
+                                rows={3}
                                 required
-                                value={formData.password_confirmation}
+                                value={formData.address}
                                 onChange={handleChange}
-                                className={`mt-1 block w-full px-3 py-2 border ${errors.password_confirmation ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                className={`mt-1 block w-full px-3 py-2 border ${errors.address ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             />
+                            {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
+                        </div>
+
+                        {/* Image upload */}
+                        <div>
+                            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+                                Profile Image
+                            </label>
+                            <div className="mt-1 flex items-center">
+                                {previewImage ? (
+                                    <img
+                                        src={previewImage}
+                                        alt="Preview"
+                                        className="h-12 w-12 rounded-full object-cover mr-4"
+                                    />
+                                ) : (
+                                    <span className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                        <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                    </span>
+                                )}
+                                <input
+                                    id="image"
+                                    name="image"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-blue-50 file:text-blue-700
+                                    hover:file:bg-blue-100"
+                                />
+                            </div>
+                            {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
                         </div>
 
                         {/* Terms checkbox (full width) */}
@@ -184,7 +272,6 @@ const Register = () => {
                         </button>
                     </div>
                 </form>
-
 
                 <div className="mt-6">
                     <div className="relative">
