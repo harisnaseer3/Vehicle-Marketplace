@@ -41,4 +41,9 @@ class Post extends Model
     {
         return $this->belongsTo(VehicleRegister::class, 'vehicle_registration_id');
     }
+
+    public function sold()
+    {
+        return $this->hasOne(PostSale::class);
+    }
 }

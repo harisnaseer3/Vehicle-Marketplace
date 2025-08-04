@@ -138,6 +138,14 @@ const FeaturedVehicles = ({isHomePage = false}) => {
                                 className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
                             >
                                 <div className="h-48 bg-gray-200 overflow-hidden relative">
+                                    {/* ✅ SOLD Badge */}
+                                    {vehicle.sold?.status === 'sold' && (
+                                        <div
+                                            className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
+                                            Sold
+                                        </div>
+                                    )}
+
                                     {/* Certified Badge */}
                                     {vehicle.certified === 1 && (
                                         <div
@@ -169,15 +177,24 @@ const FeaturedVehicles = ({isHomePage = false}) => {
                                         {vehicle.mileage?.toLocaleString()} km • {vehicle.color}
                                     </p>
                                     <div className="mt-4 flex justify-between items-center">
-          <span className="text-xl font-bold text-blue-600">
-            Rs. {vehicle.price ? parseFloat(vehicle.price).toLocaleString() : 'N/A'}
-          </span>
-                                        <Link
-                                            to={`/vehicle/${vehicle.id}`}
-                                            className="text-blue-600 hover:text-blue-800 font-medium"
+                                        <span
+                                            className={`text-xl font-bold ${
+                                                vehicle.sold?.status === 'sold' ? 'text-gray-500 line-through' : 'text-blue-600'
+                                            }`}
                                         >
-                                            View Details
-                                        </Link>
+                                        Rs. {vehicle.price ? parseFloat(vehicle.price).toLocaleString() : 'N/A'}
+                                        </span>
+                                        {vehicle.sold?.status === 'sold' ? (
+                                            <span className="text-gray-400 text-sm italic">Sold Out</span>
+                                        ) : (
+                                            <Link
+                                                to={`/vehicle/${vehicle.id}`}
+                                                className="text-blue-600 hover:text-blue-800 font-medium"
+                                            >
+                                                View Details
+                                            </Link>
+                                        )}
+
                                     </div>
                                 </div>
                             </div>

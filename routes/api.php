@@ -35,12 +35,12 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/change-password', [AuthController::class, 'changePassword']);
+Route::get('/auth/check', [AuthController::class, 'checkAuthStatus']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/user/profile', [ProfileController::class, 'show']);
     Route::get('/user/vehicles', [ProfileController::class, 'userVehicles']);
     Route::put('/user/profile/update', [ProfileController::class, 'update']);
     Route::delete('/user/profile/delete', [ProfileController::class, 'destroy']);
-    Route::get('/auth/check', [AuthController::class, 'checkAuthStatus']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 

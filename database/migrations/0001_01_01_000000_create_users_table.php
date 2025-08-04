@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone', 15)->nullable();
             $table->string('address')->nullable();
+            $table->integer('is_fake_user')->default(0);
             $table->string('image')->nullable();
             $table->rememberToken();
             $table->softDeletes();

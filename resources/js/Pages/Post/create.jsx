@@ -25,7 +25,7 @@ const Create = () => {
     const [loadingOptions, setLoadingOptions] = useState(true);
 
     const [formData, setFormData] = useState({
-        user_id: user?.id || 1,
+        user_id: user?.id,
         category_id: '',
         make_id: '',
         model_id: '',

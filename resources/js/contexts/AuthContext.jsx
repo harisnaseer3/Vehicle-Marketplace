@@ -13,7 +13,11 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthStatus = async () => {
         try {
-            const response = await axios.get('/user-status');
+            const response = await axios.get('/auth/check', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                }
+            });
             setAuthState({
                 user: response.data.success ? response.data.user : null,
                 isAdmin: response.data.success ? response.data.user.isAdmin : false,

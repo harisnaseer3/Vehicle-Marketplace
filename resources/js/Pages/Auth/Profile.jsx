@@ -281,7 +281,7 @@ const Profile = () => {
                             <div className="relative">
                                 <img
                                     className="h-24 w-24 rounded-full object-cover border-4 border-white shadow"
-                                    src={user.profile_photo_url || '/images/default-profile.png'}
+                                    src={user.image ? `/storage/${user.image}` : '/images/default-profile.png'}
                                     alt="Profile"
                                 />
                                 {isEditing && (

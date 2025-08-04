@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'address',
+        'is_fake_user',
         'image',
     ];
 
@@ -38,6 +39,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
 
     /**
      * Get the attributes that should be cast.
