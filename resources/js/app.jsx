@@ -19,6 +19,20 @@ import SearchResult from '@/Components/Vehicles/Search/SearchResult.jsx';
 //Bikes
 import BikesListing from '@/Pages/Vehicles/AllBikes.jsx';
 
+// Dealer Pages
+import AllDealers from '@/Pages/Dealers/AllDealers.jsx';
+import DealerShowroom from '@/Pages/Dealers/DealerShowroom.jsx';
+
+// Help Pages
+import HelpCenter from '@/Pages/Help/HelpCenter.jsx';
+
+// News Pages
+import NewsPage from '@/Pages/News/NewsPage.jsx';
+import ArticleDetail from '@/Pages/News/ArticleDetail.jsx';
+
+// Reviews Pages
+import ReviewsPage from '@/Pages/Reviews/ReviewsPage.jsx';
+import WriteReview from '@/Pages/Reviews/WriteReview.jsx';
 
 // Auth Pages
 import Login from '@/Pages/Auth/Login';
@@ -129,6 +143,30 @@ function AppRoutes() {
             {/*Bikes*/}
             <Route path="/bikes" element={<GuestLayout><BikesListing/></GuestLayout>}/>
             <Route path="/bike/:id" element={<GuestLayout><BikeDetails/></GuestLayout>}/>
+
+            {/* Dealer Routes */}
+            <Route path="/dealers" element={<GuestLayout><AllDealers/></GuestLayout>}/>
+            <Route path="/dealer/:id" element={<GuestLayout><DealerShowroom/></GuestLayout>}/>
+
+            {/* Help Routes */}
+            <Route path="/help" element={<GuestLayout><HelpCenter/></GuestLayout>}/>
+
+            {/* News Routes */}
+            <Route path="/news" element={<GuestLayout><NewsPage/></GuestLayout>}/>
+            <Route path="/news/:slug" element={<GuestLayout><ArticleDetail/></GuestLayout>}/>
+
+            {/* Reviews Routes */}
+            <Route path="/reviews" element={<GuestLayout><ReviewsPage/></GuestLayout>}/>
+            <Route path="/reviews/write" element={<GuestLayout><WriteReview/></GuestLayout>}/>
+            <Route path="/reviews/write/:id" element={<GuestLayout><WriteReview/></GuestLayout>}/>
+
+            {/* Brand Routes */}
+            <Route path="/vehicles/brands" element={<GuestLayout><VehicleListing/></GuestLayout>}/>
+            <Route path="/bikes/brands" element={<GuestLayout><BikesListing/></GuestLayout>}/>
+
+            {/* Recently Viewed Routes */}
+            <Route path="/vehicles/recently-viewed" element={<GuestLayout><VehicleListing/></GuestLayout>}/>
+            <Route path="/bikes/recently-viewed" element={<GuestLayout><BikesListing/></GuestLayout>}/>
 
             {/* Authentication Routes */}
             <Route path="/login" element={<GuestLayout><Login/></GuestLayout>}/>

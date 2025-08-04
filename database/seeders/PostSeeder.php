@@ -92,12 +92,14 @@ class PostSeeder extends Seeder
                 }
             }
 
+            $categoryId = rand(1, 3); // 1=cars, 2=bikes, 3=auto parts
+
             Post::create([
                 'user_id' => $fakeUserIds[array_rand($fakeUserIds)],
                 'title' => $this->generatePostTitle($makeId, $modelIds[array_rand($modelIds)]),
                 'description' => $this->generatePostDescription(),
                 'price' => $this->generateRealisticPrice($makeId),
-                'category_id' => rand(1, 3),
+                'category_id' => $categoryId,
                 'make_id' => $makeId,
                 'model_id' => $modelIds[array_rand($modelIds)],
                 'year' => $this->generateYear(),
@@ -115,7 +117,14 @@ class PostSeeder extends Seeder
                 'certified' => rand(0, 1),
                 'managed_by_us' => rand(0, 1),
                 'is_featured' => rand(0, 1),
-                'created_at' => now()->subDays(rand(0, 30)), // Posts from last 30 days
+
+                // New fields
+                'engine_size' => $categoryId === 2 ? rand(70, 1000) : null, // Only for bikes
+                'bike_type' => $categoryId === 2 ? ['sports', 'cruiser', 'scooter', 'touring'][array_rand(['sports', 'cruiser', 'scooter', 'touring'])] : null,
+                'views_count' => rand(0, 500),
+                'favorites_count' => rand(0, 100),
+
+                'created_at' => now()->subDays(rand(0, 30)),
                 'updated_at' => now(),
             ]);
         }

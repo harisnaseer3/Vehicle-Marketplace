@@ -33,6 +33,10 @@ class DatabaseSeeder extends Seeder
             VehicleModelSeeder::class,
             VehicleRegisterSeeder::class,
             PostSeeder::class,
+            DealerSeeder::class,
+            NewsCategorySeeder::class,
+            NewsArticleSeeder::class,
+            ReviewSeeder::class,
         ]);
     }
 }

@@ -30,11 +30,15 @@ return new class extends Migration
             $table->string('body_type')->nullable();
             $table->string('condition')->nullable();
             $table->string('location')->nullable();
+            $table->integer('engine_size')->nullable(); // For bikes
+            $table->string('bike_type')->nullable(); // For bikes: sports, cruiser, scooter, etc.
             $table->json('features')->nullable();
             $table->json('images')->nullable();
             $table->integer('is_featured')->default(0);
             $table->integer('certified')->default(0);
             $table->integer('managed_by_us')->default(0);
+            $table->integer('views_count')->default(0); // Track views
+            $table->integer('favorites_count')->default(0); // Track favorites
             $table->softDeletes();
             $table->timestamps();
         });

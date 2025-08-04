@@ -27,9 +27,11 @@ class PostsController extends BaseController
                     $q->where('name', 'Cars');
                 });
 
-            if ($request->has('condition')) {
-                $query->where('condition', $request->input('condition'));
-            }
+            // Apply filters
+            $this->applyFilters($query, $request);
+
+            // Apply sorting
+            $this->applySorting($query, $request);
 
             $vehicles = $query->paginate($per_page);
 
@@ -50,15 +52,115 @@ class PostsController extends BaseController
                     $q->where('name', 'Bikes');
                 });
 
-            if ($request->has('condition')) {
-                $query->where('condition', $request->input('condition'));
-            }
+            // Apply filters
+            $this->applyFilters($query, $request);
+
+            // Apply sorting
+            $this->applySorting($query, $request);
 
             $vehicles = $query->paginate($per_page);
 
-            return $this->sendResponse($vehicles->toArray(), 'Vehicles retrieved successfully.');
+            return $this->sendResponse($vehicles->toArray(), 'Bikes retrieved successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
+        }
+    }
+
+    private function applyFilters($query, $request)
+    {
+        if ($request->has('make_id') && $request->make_id) {
+            $query->where('make_id', $request->make_id);
+        }
+
+        if ($request->has('model_id') && $request->model_id) {
+            $query->where('model_id', $request->model_id);
+        }
+
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->has('year') && $request->year) {
+            $query->where('year', $request->year);
+        }
+
+        if ($request->has('condition') && $request->condition) {
+            $query->where('condition', $request->condition);
+        }
+
+        if ($request->has('transmission_type') && $request->transmission_type) {
+            $query->where('transmission_type', $request->transmission_type);
+        }
+
+        if ($request->has('fuel_type') && $request->fuel_type) {
+            $query->where('fuel_type', $request->fuel_type);
+        }
+
+        if ($request->has('body_type') && $request->body_type) {
+            $query->where('body_type', $request->body_type);
+        }
+
+        if ($request->has('color') && $request->color) {
+            $query->where('color', $request->color);
+        }
+
+        if ($request->has('location') && $request->location) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+
+        // Bike-specific filters
+        if ($request->has('engine_capacity') && $request->engine_capacity) {
+            $query->where('engine_size', $request->engine_capacity);
+        }
+
+        if ($request->has('bike_type') && $request->bike_type) {
+            $query->where('bike_type', $request->bike_type);
+        }
+
+        // Quick filters
+        if ($request->has('certified') && $request->certified) {
+            $query->where('certified', true);
+        }
+
+        if ($request->has('featured') && $request->featured) {
+            $query->where('is_featured', true);
+        }
+
+        if ($request->has('new_arrivals') && $request->new_arrivals) {
+            $query->where('created_at', '>=', now()->subDays(7));
+        }
+
+        if ($request->has('best_deals') && $request->best_deals) {
+            // Logic for best deals (e.g., price below average)
+            $query->where('price', '<=', 500000); // Example threshold
+        }
+    }
+
+    private function applySorting($query, $request)
+    {
+        $sortBy = $request->get('sort_by', 'latest');
+
+        switch ($sortBy) {
+            case 'price_low':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'year':
+                $query->orderBy('year', 'desc');
+                break;
+            case 'mileage':
+                $query->orderBy('mileage', 'asc');
+                break;
+            case 'latest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
         }
     }
 
@@ -91,7 +193,7 @@ class PostsController extends BaseController
                 'price' => $request->price,
                 'features' => is_array($request->features)
                     ? $request->features
-                    : array_map('trim', explode(',', $request->features)), // Should be array, casted in model
+                    : array_map('trim', explode(',', $request->features)),
                 'year' => $request->year,
                 'mileage' => $request->mileage,
                 'transmission_type' => $request->transmission_type,
@@ -100,6 +202,8 @@ class PostsController extends BaseController
                 'condition' => $request->condition,
                 'color' => $request->color,
                 'location' => $request->location,
+                'engine_size' => $request->engine_size,
+                'bike_type' => $request->bike_type,
                 'images' => !empty($imagePaths) ? $imagePaths : null,
                 'is_featured' => $request->boolean('is_featured')
             ]);
@@ -192,6 +296,8 @@ class PostsController extends BaseController
                 'condition' => $request->condition,
                 'color' => $request->color,
                 'location' => $request->location,
+                'engine_size' => $request->engine_size,
+                'bike_type' => $request->bike_type,
                 'images' => !empty($newImagePaths) ? $newImagePaths : $post->images,
                 'is_featured' => $request->boolean('is_featured')
             ]);

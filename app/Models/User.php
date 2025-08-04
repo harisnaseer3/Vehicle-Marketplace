@@ -59,4 +59,45 @@ class User extends Authenticatable
         return $this->image ? asset('storage/' . $this->image) : asset('images/default-profile.png');
     }
 
+    // New relationships for enhanced features
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function recentlyViewed()
+    {
+        return $this->hasMany(RecentlyViewed::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'reviewer_id');
+    }
+
+    public function dealer()
+    {
+        return $this->hasOne(Dealer::class);
+    }
+
+    // Helper methods
+    public function getFavoritesCountAttribute()
+    {
+        return $this->favorites()->count();
+    }
+
+    public function getPostsCountAttribute()
+    {
+        return $this->posts()->count();
+    }
+
+    public function getRecentlyViewedCountAttribute()
+    {
+        return $this->recentlyViewed()->count();
+    }
 }
