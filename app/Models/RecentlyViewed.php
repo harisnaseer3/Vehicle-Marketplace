@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RecentlyViewed extends Model
 {
+    protected $table = 'recently_viewed';
     protected $fillable = [
         'user_id',
         'post_id',
@@ -25,4 +26,4 @@ class RecentlyViewed extends Model
     {
         return $this->belongsTo(Post::class);
     }
-} 
+}

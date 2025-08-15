@@ -12,6 +12,8 @@ use App\Http\Controllers\Vehicle\FeaturedVehicleController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\StatsController;
+use App\Http\Controllers\DealController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,10 +44,16 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/change-password', [AuthController::class, 'changePassword']);
 Route::get('/auth/check', [AuthController::class, 'checkAuthStatus']);
 
+//stats
+Route::get('stats', [StatsController::class, 'index']);
+Route::get('count-by-categories', [StatsController::class, 'countVehiclesByCategories']);
+Route::apiResource('deals', DealController::class);
+
 // Public Dealer Routes
 Route::get('/dealers', [DealersController::class, 'index']);
 Route::get('/dealers/featured', [DealersController::class, 'featured']);
 Route::get('/dealers/{id}', [DealersController::class, 'show']);
+
 
 // Public Review Routes
 Route::get('/reviews', [ReviewsController::class, 'index']);

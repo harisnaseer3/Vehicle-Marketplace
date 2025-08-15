@@ -87,7 +87,7 @@ class SimulateMarketplace extends Command
     private function simulateBuy()
     {
         // Only pick posts that haven't been sold yet
-        $unsoldPost = Post::whereDoesntHave('sale')->inRandomOrder()->first();
+        $unsoldPost = Post::whereDoesntHave('sold')->inRandomOrder()->first();
         if (!$unsoldPost) return;
 
         $buyer = User::where('is_fake_user', 1)
@@ -101,6 +101,11 @@ class SimulateMarketplace extends Command
             'post_id' => $unsoldPost->id,
             'buyer_id' => $buyer->id,
             'sold_at' => now(),
+            'status' => StatusEnum::SOLD
+        ]);
+
+        // Update the post's status
+        $unsoldPost->update([
             'status' => StatusEnum::SOLD
         ]);
 

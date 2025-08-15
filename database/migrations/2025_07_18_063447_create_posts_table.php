@@ -38,7 +38,10 @@ return new class extends Migration
             $table->integer('certified')->default(0);
             $table->integer('managed_by_us')->default(0);
             $table->integer('views_count')->default(0); // Track views
+            $table->decimal('average_rating', 3, 1)->default(0);
+            $table->unsignedInteger('reviews_count')->default(0);
             $table->integer('favorites_count')->default(0); // Track favorites
+            $table->string('status')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

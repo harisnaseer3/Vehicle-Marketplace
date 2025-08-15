@@ -78,4 +78,4 @@ class FavoritesController extends BaseController
             return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
         }
     }
-} 
+}

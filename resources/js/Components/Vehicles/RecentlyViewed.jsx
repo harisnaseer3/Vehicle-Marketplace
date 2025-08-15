@@ -15,7 +15,10 @@ const RecentlyViewed = ({ category = 'vehicles' }) => {
                 try {
                     setLoading(true);
                     const response = await axios.get('recently-viewed', {
-                        params: { category, limit: 4 }
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                        },
+                        params: { limit: 4 }
                     });
                     setRecentlyViewed(response.data.data || []);
                 } catch (error) {
@@ -94,7 +97,7 @@ const RecentlyViewed = ({ category = 'vehicles' }) => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="space-y-2">
                             <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
                                 {item.make?.name} {item.model?.name}
@@ -121,7 +124,7 @@ const RecentlyViewed = ({ category = 'vehicles' }) => {
                                 <span className="capitalize">{item.location?.replace('-', ' ')}</span>
                             </div>
                         </div>
-                        
+
                         <Link
                             to={`/${category === 'bikes' ? 'bike' : 'vehicle'}/${item.id}`}
                             className="mt-3 block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-md text-sm font-medium transition-colors duration-200"
@@ -135,4 +138,4 @@ const RecentlyViewed = ({ category = 'vehicles' }) => {
     );
 };
 
-export default RecentlyViewed; 
+export default RecentlyViewed;

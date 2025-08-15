@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import {useState, useEffect} from 'react';
+import {useParams, Link, useNavigate} from 'react-router-dom';
 import axios from '@/axios.js';
-import { useAuth } from '@/contexts/AuthContext.jsx';
-import { 
-    FaArrowLeft, 
-    FaPhone, 
-    FaEnvelope, 
-    FaWhatsapp, 
-    FaStar, 
-    FaCheckCircle, 
-    FaMapMarkerAlt, 
-    FaMotorcycle, 
-    FaExclamationTriangle, 
-    FaFileAlt, 
-    FaDownload, 
-    FaHistory, 
-    FaTools, 
-    FaShieldAlt, 
+import {useAuth} from '@/contexts/AuthContext.jsx';
+import {
+    FaArrowLeft,
+    FaPhone,
+    FaEnvelope,
+    FaWhatsapp,
+    FaStar,
+    FaCheckCircle,
+    FaMapMarkerAlt,
+    FaMotorcycle,
+    FaExclamationTriangle,
+    FaFileAlt,
+    FaDownload,
+    FaHistory,
+    FaTools,
+    FaShieldAlt,
     FaClock,
     FaHeart,
     FaShare,
@@ -29,14 +29,14 @@ import {
 } from 'react-icons/fa';
 
 const BikeDetails = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
     const [bike, setBike] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [sellerInfo, setSellerInfo] = useState(null);
-    const { user } = useAuth();
+    const {user} = useAuth();
     const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
@@ -71,7 +71,7 @@ const BikeDetails = () => {
     const handleContactSeller = (method) => {
         if (!sellerInfo) return;
 
-        switch(method) {
+        switch (method) {
             case 'phone':
                 window.open(`tel:${sellerInfo.phone}`);
                 break;
@@ -88,13 +88,18 @@ const BikeDetails = () => {
 
     const toggleFavorite = async () => {
         if (!user) {
-            navigate('/login', { state: { from: `/bike/${bike.id}` } });
+            navigate('/login', {state: {from: `/bike/${bike.id}`}});
             return;
         }
 
         try {
-            const response = await axios.post('favorites/toggle', { post_id: bike.id });
-            const { is_favorited } = response.data.data;
+            const response = await axios.post('favorites/toggle', {post_id: bike.id},
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    }
+                });
+            const {is_favorited} = response.data.data;
             setIsFavorite(is_favorited);
         } catch (error) {
             console.error('Error toggling favorite:', error);
@@ -107,11 +112,20 @@ const BikeDetails = () => {
             if (bike && user) {
                 try {
                     // Record view
-                    await axios.post('recently-viewed/add', { post_id: bike.id });
-                    
+                    await axios.post('recently-viewed/add',
+                        {post_id: bike.id},
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                            }
+                        });
+
                     // Check if bike is favorited
-                    const response = await axios.get('favorites/check', { 
-                        params: { post_id: bike.id } 
+                    const response = await axios.get('favorites/check', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                        },
+                        params: {post_id: bike.id},
                     });
                     setIsFavorite(response.data.data.is_favorited);
                 } catch (error) {
@@ -169,24 +183,30 @@ const BikeDetails = () => {
                     <nav className="flex" aria-label="Breadcrumb">
                         <ol className="inline-flex items-center space-x-1 md:space-x-3">
                             <li className="inline-flex items-center">
-                                <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-red-600">
+                                <Link to="/"
+                                      className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-red-600">
                                     Home
                                 </Link>
                             </li>
                             <li>
                                 <div className="flex items-center">
-                                    <svg className="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                                    <svg className="w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
+                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                                              strokeWidth="2" d="m1 9 4-4-4-4"/>
                                     </svg>
-                                    <Link to="/bikes" className="ml-1 text-sm font-medium text-gray-700 hover:text-red-600 md:ml-2">
+                                    <Link to="/bikes"
+                                          className="ml-1 text-sm font-medium text-gray-700 hover:text-red-600 md:ml-2">
                                         Bikes
                                     </Link>
                                 </div>
                             </li>
                             <li aria-current="page">
                                 <div className="flex items-center">
-                                    <svg className="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                                    <svg className="w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
+                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                                              strokeWidth="2" d="m1 9 4-4-4-4"/>
                                     </svg>
                                     <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2">
                                         {bike.title}
@@ -213,13 +233,15 @@ const BikeDetails = () => {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     {bike.is_featured && (
-                                        <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                                        <span
+                                            className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">
                                             Featured
                                         </span>
                                     )}
                                     {bike.certified === 1 && (
-                                        <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded flex items-center">
-                                            <FaCheckCircle className="w-3 h-3 mr-1" />
+                                        <span
+                                            className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded flex items-center">
+                                            <FaCheckCircle className="w-3 h-3 mr-1"/>
                                             Certified
                                         </span>
                                     )}
@@ -243,7 +265,8 @@ const BikeDetails = () => {
                                 <div>
                                     <div className="relative h-96 bg-gray-100 rounded-lg overflow-hidden">
                                         {bike.certified === 1 && (
-                                            <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
+                                            <div
+                                                className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
                                                 Certified
                                             </div>
                                         )}
@@ -282,27 +305,28 @@ const BikeDetails = () => {
                                 {/* Quick Specs */}
                                 <div className="space-y-4">
                                     <div className="flex items-center text-gray-600">
-                                        <FaTachometerAlt className="w-5 h-5 mr-2 text-gray-400" />
+                                        <FaTachometerAlt className="w-5 h-5 mr-2 text-gray-400"/>
                                         <span className="font-medium">{bike.mileage?.toLocaleString() || '0'} km</span>
                                     </div>
                                     <div className="flex items-center text-gray-600">
-                                        <FaMotorcycle className="w-5 h-5 mr-2 text-gray-400" />
+                                        <FaMotorcycle className="w-5 h-5 mr-2 text-gray-400"/>
                                         <span className="font-medium">{bike.engine_size || 'N/A'} cc</span>
                                     </div>
                                     <div className="flex items-center text-gray-600">
-                                        <FaGasPump className="w-5 h-5 mr-2 text-gray-400" />
+                                        <FaGasPump className="w-5 h-5 mr-2 text-gray-400"/>
                                         <span className="capitalize font-medium">{bike.fuel_type || 'N/A'}</span>
                                     </div>
                                     <div className="flex items-center text-gray-600">
-                                        <FaPalette className="w-5 h-5 mr-2 text-gray-400" />
+                                        <FaPalette className="w-5 h-5 mr-2 text-gray-400"/>
                                         <span className="capitalize font-medium">{bike.color || 'N/A'}</span>
                                     </div>
                                     <div className="flex items-center text-gray-600">
-                                        <FaCog className="w-5 h-5 mr-2 text-gray-400" />
-                                        <span className="capitalize font-medium">{bike.transmission_type || 'N/A'}</span>
+                                        <FaCog className="w-5 h-5 mr-2 text-gray-400"/>
+                                        <span
+                                            className="capitalize font-medium">{bike.transmission_type || 'N/A'}</span>
                                     </div>
                                     <div className="flex items-center text-gray-600">
-                                        <FaCalendarAlt className="w-5 h-5 mr-2 text-gray-400" />
+                                        <FaCalendarAlt className="w-5 h-5 mr-2 text-gray-400"/>
                                         <span className="font-medium">{bike.year || 'N/A'}</span>
                                     </div>
                                 </div>
@@ -323,7 +347,8 @@ const BikeDetails = () => {
                                 <h2 className="text-xl font-semibold mb-3">Features</h2>
                                 <div className="flex flex-wrap gap-2">
                                     {bike.features.map((feature, index) => (
-                                        <span key={index} className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
+                                        <span key={index}
+                                              className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
                                             {feature}
                                         </span>
                                     ))}
@@ -341,15 +366,17 @@ const BikeDetails = () => {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-600">Average Annual Mileage</span>
-                                    <span className="font-medium">{Math.round(bike.mileage / (new Date().getFullYear() - bike.year)).toLocaleString()} km/year</span>
+                                    <span
+                                        className="font-medium">{Math.round(bike.mileage / (new Date().getFullYear() - bike.year)).toLocaleString()} km/year</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-600">Market Value</span>
                                     <span className="font-medium text-green-600">Fair Price</span>
                                 </div>
                             </div>
-                            <button className="w-full mt-4 text-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300">
-                                <FaHistory className="inline w-4 h-4 mr-2" />
+                            <button
+                                className="w-full mt-4 text-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300">
+                                <FaHistory className="inline w-4 h-4 mr-2"/>
                                 Get Full History Report
                             </button>
                         </div>
@@ -359,20 +386,21 @@ const BikeDetails = () => {
                             <h2 className="text-xl font-semibold mb-4">Safety & Inspection</h2>
                             <div className="space-y-3">
                                 <div className="flex items-center">
-                                    <FaShieldAlt className="text-green-500 mr-2" />
+                                    <FaShieldAlt className="text-green-500 mr-2"/>
                                     <span className="text-sm">Bike Verified</span>
                                 </div>
                                 <div className="flex items-center">
-                                    <FaCheckCircle className="text-green-500 mr-2" />
+                                    <FaCheckCircle className="text-green-500 mr-2"/>
                                     <span className="text-sm">No Accidents Reported</span>
                                 </div>
                                 <div className="flex items-center">
-                                    <FaClock className="text-yellow-500 mr-2" />
+                                    <FaClock className="text-yellow-500 mr-2"/>
                                     <span className="text-sm">Inspection Due Soon</span>
                                 </div>
                             </div>
-                            <button className="w-full mt-4 text-center bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition duration-300">
-                                <FaTools className="inline w-4 h-4 mr-2" />
+                            <button
+                                className="w-full mt-4 text-center bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition duration-300">
+                                <FaTools className="inline w-4 h-4 mr-2"/>
                                 Schedule Inspection
                             </button>
                         </div>
@@ -397,19 +425,19 @@ const BikeDetails = () => {
                                         onClick={() => handleContactSeller('phone')}
                                         className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                                     >
-                                        <FaPhone className="mr-2" /> Call Seller
+                                        <FaPhone className="mr-2"/> Call Seller
                                     </button>
                                     <button
                                         onClick={() => handleContactSeller('whatsapp')}
                                         className="w-full flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                                     >
-                                        <FaWhatsapp className="mr-2" /> WhatsApp
+                                        <FaWhatsapp className="mr-2"/> WhatsApp
                                     </button>
                                     <button
                                         onClick={() => handleContactSeller('email')}
                                         className="w-full flex items-center justify-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                                     >
-                                        <FaEnvelope className="mr-2" /> Email Seller
+                                        <FaEnvelope className="mr-2"/> Email Seller
                                     </button>
                                 </div>
                             </div>
@@ -425,34 +453,36 @@ const BikeDetails = () => {
                                 <div>
                                     <h3 className="font-semibold text-lg">Motorcycle World</h3>
                                     <div className="flex items-center text-sm text-gray-600">
-                                        <FaStar className="text-yellow-400 mr-1" />
+                                        <FaStar className="text-yellow-400 mr-1"/>
                                         <span>4.9 (89 reviews)</span>
-                                        <FaCheckCircle className="text-green-500 ml-2" />
+                                        <FaCheckCircle className="text-green-500 ml-2"/>
                                         <span className="ml-1">Verified Dealer</span>
                                     </div>
                                 </div>
                             </div>
                             <div className="space-y-2 mb-4">
                                 <div className="flex items-center text-sm text-gray-600">
-                                    <FaMapMarkerAlt className="mr-2" />
+                                    <FaMapMarkerAlt className="mr-2"/>
                                     <span>Lahore, Pakistan</span>
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
-                                    <FaPhone className="mr-2" />
+                                    <FaPhone className="mr-2"/>
                                     <span>+92 300 9876543</span>
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
-                                    <FaEnvelope className="mr-2" />
+                                    <FaEnvelope className="mr-2"/>
                                     <span>info@motorcycleworld.com</span>
                                 </div>
                             </div>
                             <div className="flex space-x-3">
-                                <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
-                                    <FaPhone className="inline w-4 h-4 mr-2" />
+                                <button
+                                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                                    <FaPhone className="inline w-4 h-4 mr-2"/>
                                     Call Dealer
                                 </button>
-                                <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-300">
-                                    <FaWhatsapp className="inline w-4 h-4 mr-2" />
+                                <button
+                                    className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-300">
+                                    <FaWhatsapp className="inline w-4 h-4 mr-2"/>
                                     WhatsApp
                                 </button>
                             </div>
@@ -463,7 +493,7 @@ const BikeDetails = () => {
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-semibold">Customer Reviews</h2>
                                 <div className="flex items-center">
-                                    <FaStar className="text-yellow-400 mr-1" />
+                                    <FaStar className="text-yellow-400 mr-1"/>
                                     <span className="font-semibold">4.7</span>
                                     <span className="text-gray-600 ml-1">(18 reviews)</span>
                                 </div>
@@ -476,14 +506,15 @@ const BikeDetails = () => {
                                             <span className="font-medium">Ali Hassan</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
                                         </div>
                                     </div>
-                                    <p className="text-gray-600 text-sm">"Great bike in excellent condition. Smooth ride and good fuel efficiency!"</p>
+                                    <p className="text-gray-600 text-sm">"Great bike in excellent condition. Smooth ride
+                                        and good fuel efficiency!"</p>
                                     <span className="text-xs text-gray-500">3 days ago</span>
                                 </div>
                                 <div className="border-b border-gray-200 pb-4">
@@ -493,18 +524,20 @@ const BikeDetails = () => {
                                             <span className="font-medium">Fatima Khan</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-yellow-400 w-4 h-4" />
-                                            <FaStar className="text-gray-300 w-4 h-4" />
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-yellow-400 w-4 h-4"/>
+                                            <FaStar className="text-gray-300 w-4 h-4"/>
                                         </div>
                                     </div>
-                                    <p className="text-gray-600 text-sm">"Reliable motorcycle, perfect for daily commute. Dealer was very helpful."</p>
+                                    <p className="text-gray-600 text-sm">"Reliable motorcycle, perfect for daily
+                                        commute. Dealer was very helpful."</p>
                                     <span className="text-xs text-gray-500">1 week ago</span>
                                 </div>
                             </div>
-                            <button className="w-full mt-4 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition duration-300">
+                            <button
+                                className="w-full mt-4 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition duration-300">
                                 View All Reviews
                             </button>
                         </div>
@@ -532,7 +565,7 @@ const BikeDetails = () => {
                             </div>
                             <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                                 <p className="text-sm text-blue-800">
-                                    <FaExclamationTriangle className="inline w-4 h-4 mr-1" />
+                                    <FaExclamationTriangle className="inline w-4 h-4 mr-1"/>
                                     This motorcycle is priced competitively in the current market.
                                 </p>
                             </div>
@@ -542,38 +575,42 @@ const BikeDetails = () => {
                         <div className="bg-white rounded-lg shadow-md p-6">
                             <h2 className="text-xl font-semibold mb-4">Compare This Bike</h2>
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div
+                                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                                     <div className="flex items-center">
-                                        <input type="checkbox" className="mr-3" />
+                                        <input type="checkbox" className="mr-3"/>
                                         <div>
                                             <p className="font-medium">Honda CG 125 2021</p>
                                             <p className="text-sm text-gray-600">Rs. 185,000</p>
                                         </div>
                                     </div>
-                                    <FaMotorcycle className="text-red-600" />
+                                    <FaMotorcycle className="text-red-600"/>
                                 </div>
-                                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div
+                                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                                     <div className="flex items-center">
-                                        <input type="checkbox" className="mr-3" />
+                                        <input type="checkbox" className="mr-3"/>
                                         <div>
                                             <p className="font-medium">Yamaha YBR 125 2020</p>
                                             <p className="text-sm text-gray-600">Rs. 165,000</p>
                                         </div>
                                     </div>
-                                    <FaMotorcycle className="text-red-600" />
+                                    <FaMotorcycle className="text-red-600"/>
                                 </div>
-                                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div
+                                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                                     <div className="flex items-center">
-                                        <input type="checkbox" className="mr-3" />
+                                        <input type="checkbox" className="mr-3"/>
                                         <div>
                                             <p className="font-medium">Suzuki GS 150 2019</p>
                                             <p className="text-sm text-gray-600">Rs. 145,000</p>
                                         </div>
                                     </div>
-                                    <FaMotorcycle className="text-red-600" />
+                                    <FaMotorcycle className="text-red-600"/>
                                 </div>
                             </div>
-                            <button className="w-full mt-4 text-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300">
+                            <button
+                                className="w-full mt-4 text-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300">
                                 Compare Selected Bikes
                             </button>
                         </div>
@@ -582,39 +619,43 @@ const BikeDetails = () => {
                         <div className="bg-white rounded-lg shadow-md p-6">
                             <h2 className="text-xl font-semibold mb-4">Bike Documents</h2>
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div
+                                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                                     <div className="flex items-center">
-                                        <FaFileAlt className="text-blue-600 mr-3" />
+                                        <FaFileAlt className="text-blue-600 mr-3"/>
                                         <div>
                                             <p className="font-medium">Registration Book</p>
                                             <p className="text-sm text-gray-600">Original document available</p>
                                         </div>
                                     </div>
-                                    <FaCheckCircle className="text-green-500" />
+                                    <FaCheckCircle className="text-green-500"/>
                                 </div>
-                                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div
+                                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                                     <div className="flex items-center">
-                                        <FaFileAlt className="text-blue-600 mr-3" />
+                                        <FaFileAlt className="text-blue-600 mr-3"/>
                                         <div>
                                             <p className="font-medium">Insurance</p>
                                             <p className="text-sm text-gray-600">Valid until Dec 2024</p>
                                         </div>
                                     </div>
-                                    <FaCheckCircle className="text-green-500" />
+                                    <FaCheckCircle className="text-green-500"/>
                                 </div>
-                                <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div
+                                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                                     <div className="flex items-center">
-                                        <FaFileAlt className="text-blue-600 mr-3" />
+                                        <FaFileAlt className="text-blue-600 mr-3"/>
                                         <div>
                                             <p className="font-medium">Service History</p>
                                             <p className="text-sm text-gray-600">Complete service records</p>
                                         </div>
                                     </div>
-                                    <FaCheckCircle className="text-green-500" />
+                                    <FaCheckCircle className="text-green-500"/>
                                 </div>
                             </div>
-                            <button className="w-full mt-4 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition duration-300">
-                                <FaDownload className="inline w-4 h-4 mr-2" />
+                            <button
+                                className="w-full mt-4 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition duration-300">
+                                <FaDownload className="inline w-4 h-4 mr-2"/>
                                 Download Documents
                             </button>
                         </div>

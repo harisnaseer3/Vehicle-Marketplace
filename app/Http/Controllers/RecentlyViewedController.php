@@ -14,7 +14,7 @@ class RecentlyViewedController extends BaseController
         try {
             $user = Auth::user();
             $category = $request->get('category', 'all');
-            $limit = $request->get('limit', 10);
+            $limit = $request->get('limit', 12);
 
             $query = $user->recentlyViewed()
                 ->with(['post' => function ($query) {
@@ -63,7 +63,7 @@ class RecentlyViewedController extends BaseController
             $post = Post::find($postId);
             $post->incrementViews();
 
-            return $this->sendResponse([], 'View recorded successfully.');
+            return $this->sendResponse($post, 'View recorded successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
         }
@@ -80,4 +80,4 @@ class RecentlyViewedController extends BaseController
             return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
         }
     }
-} 
+}

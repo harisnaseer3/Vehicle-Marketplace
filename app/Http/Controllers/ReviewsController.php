@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Reviews\StoreReviewRequest;
+use App\Http\Requests\Reviews\UpdateReviewRequest;
 use App\Models\Review;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -55,16 +57,9 @@ class ReviewsController extends BaseController
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreReviewRequest $request)
     {
         try {
-            $request->validate([
-                'post_id' => 'required|exists:posts,id',
-                'rating' => 'required|integer|between:1,5',
-                'title' => 'required|string|max:255',
-                'comment' => 'required|string|min:10|max:1000'
-            ]);
-
             // Check if user has already reviewed this post
             $existingReview = Review::where('reviewer_id', Auth::id())
                 ->where('post_id', $request->post_id)
@@ -93,7 +88,7 @@ class ReviewsController extends BaseController
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateReviewRequest $request, $id)
     {
         try {
             $review = Review::findOrFail($id);
@@ -103,15 +98,8 @@ class ReviewsController extends BaseController
                 return $this->sendError('Unauthorized', 403);
             }
 
-            $request->validate([
-                'rating' => 'sometimes|integer|between:1,5',
-                'title' => 'sometimes|string|max:255',
-                'comment' => 'sometimes|string|min:10|max:1000'
-            ]);
-
             $review->update($request->only(['rating', 'title', 'comment']));
 
-            // Update post's average rating
             $this->updatePostRating($review->post_id);
 
             return $this->sendResponse($review->toArray(), 'Review updated successfully.');
@@ -149,7 +137,7 @@ class ReviewsController extends BaseController
             $averageRating = Review::where('post_id', $postId)
                 ->where('is_verified', true)
                 ->avg('rating');
-            
+
             $reviewsCount = Review::where('post_id', $postId)
                 ->where('is_verified', true)
                 ->count();
@@ -160,4 +148,4 @@ class ReviewsController extends BaseController
             ]);
         }
     }
-} 
+}

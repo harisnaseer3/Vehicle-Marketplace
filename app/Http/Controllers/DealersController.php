@@ -138,4 +138,4 @@ class DealersController extends BaseController
             return $this->sendError($e->getMessage(), $e->getCode() ?: 500);
         }
     }
-} 
+}

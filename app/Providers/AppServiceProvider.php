@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Deal;
+use App\Observers\DealObserver;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Filesystem\Filesystem;
@@ -27,10 +29,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        Inertia::share([
-            'auth' => [
-                'user' => fn () => Auth::user(),
-            ],
-        ]);
+//        Inertia::share([
+//            'auth' => [
+//                'user' => fn () => Auth::user(),
+//            ],
+//        ]);
+        Deal::observe(DealObserver::class);
     }
 }

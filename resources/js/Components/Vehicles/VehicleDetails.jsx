@@ -103,13 +103,13 @@ const VehicleDetails = () => {
         const principal = vehicle.price * (1 - financingData.downPayment / 100);
         const monthlyRate = financingData.interestRate / 100 / 12;
         const numberOfPayments = financingData.term;
-        
+
         if (monthlyRate === 0) return principal / numberOfPayments;
-        
-        const monthlyPayment = principal * 
-            (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+
+        const monthlyPayment = principal *
+            (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
             (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-        
+
         return monthlyPayment;
     };
 
@@ -159,18 +159,30 @@ const VehicleDetails = () => {
             if (vehicle && user) {
                 try {
                     // Record view
-                    await axios.post('recently-viewed/add', { post_id: vehicle.id });
-                    
+                    await axios.post('recently-viewed/add',
+                        { post_id: vehicle.id },
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                            }
+                        }
+                    );
+
                     // Check if vehicle is favorited
-                    const response = await axios.get('favorites/check', { 
-                        params: { post_id: vehicle.id } 
+                    const response = await axios.get('favorites/check', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                        },
+                        params: { post_id: vehicle.id }
                     });
+
                     setIsFavorite(response.data.data.is_favorited);
                 } catch (error) {
                     console.error('Error recording view or fetching favorite status:', error);
                 }
             }
         };
+
 
         if (vehicle) {
             recordViewAndFetchFavorite();

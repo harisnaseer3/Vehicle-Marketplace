@@ -8,26 +8,54 @@ const AllDealers = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterFeatured, setFilterFeatured] = useState(false);
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        total: 0,
+        per_page: 12,
+        last_page: 1
+    });
 
     useEffect(() => {
         const fetchDealers = async () => {
             try {
                 setLoading(true);
-                const params = {};
-                if (searchTerm) params.search = searchTerm;
-                if (filterFeatured) params.featured = true;
-                
+                const params = {
+                    page: pagination.current_page,
+                    ...(searchTerm && { search: searchTerm }),
+                    ...(filterFeatured && { featured: true })
+                };
+
                 const response = await axios.get('dealers', { params });
-                setDealers(response.data.data || []);
+
+                // Extract dealers from the nested data structure
+                const dealersData = response.data.data?.data || [];
+                setDealers(dealersData);
+
+                // Update pagination info
+                if (response.data.data) {
+                    setPagination({
+                        current_page: response.data.data.current_page,
+                        total: response.data.data.total,
+                        per_page: response.data.data.per_page,
+                        last_page: response.data.data.last_page
+                    });
+                }
             } catch (error) {
                 console.error('Error fetching dealers:', error);
+                setDealers([]);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDealers();
-    }, [searchTerm, filterFeatured]);
+    }, [searchTerm, filterFeatured, pagination.current_page]);
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= pagination.last_page) {
+            setPagination(prev => ({ ...prev, current_page: page }));
+        }
+    };
 
     if (loading) {
         return (
@@ -151,7 +179,45 @@ const AllDealers = () => {
                     ))}
                 </div>
 
-                {dealers.length === 0 && (
+                {/* Pagination */}
+                {pagination.total > pagination.per_page && (
+                    <div className="flex items-center justify-between mt-8">
+                        <div>
+                            <p className="text-sm text-gray-700">
+                                Showing <span className="font-medium">{(pagination.current_page - 1) * pagination.per_page + 1}</span> to{' '}
+                                <span className="font-medium">{Math.min(pagination.current_page * pagination.per_page, pagination.total)}</span> of{' '}
+                                <span className="font-medium">{pagination.total}</span> dealers
+                            </p>
+                        </div>
+                        <div className="flex space-x-2">
+                            <button
+                                onClick={() => handlePageChange(pagination.current_page - 1)}
+                                disabled={pagination.current_page === 1}
+                                className="px-4 py-2 border rounded-md text-sm font-medium disabled:opacity-50"
+                            >
+                                Previous
+                            </button>
+                            {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${pagination.current_page === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-50'}`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                            <button
+                                onClick={() => handlePageChange(pagination.current_page + 1)}
+                                disabled={pagination.current_page === pagination.last_page}
+                                className="px-4 py-2 border rounded-md text-sm font-medium disabled:opacity-50"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {dealers.length === 0 && !loading && (
                     <div className="text-center py-12">
                         <FaStore className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">No dealers found</h3>
@@ -163,4 +229,4 @@ const AllDealers = () => {
     );
 };
 
-export default AllDealers; 
+export default AllDealers;
